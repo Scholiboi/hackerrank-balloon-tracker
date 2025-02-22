@@ -54,6 +54,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 .then(resData => {
                     if (resData.message === "Submission ticked!") {
                         row.remove();
+                        loadBalloons();
                     } else {
                         alert("Error: " + resData.message);
                     }
