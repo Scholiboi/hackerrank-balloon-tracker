@@ -21,7 +21,6 @@ def receive_submissions():
     except Exception as e:
         return jsonify({"message": "Error reading submissions file."}), 500
 
-    # Use the 'id' field to determine new submissions
     existing_ids = set(old_submissions_df["id"].astype(str).tolist())
     new_submissions = [s for s in submissions if str(s.get("id")) not in existing_ids]
 
@@ -40,7 +39,7 @@ def check_balloons():
         submissions_file = os.path.join(files_dir, "submissions.csv")
         participants_file = os.path.join(files_dir, "participants.csv")
         questions_file = os.path.join(files_dir, "questions.csv")
-        # Ensure all required files exist; otherwise, return empty data.
+        # Ensure all required files exist; otherwise, return empty.
         if not (os.path.exists(submissions_file) and os.path.exists(participants_file) and os.path.exists(questions_file)):
             raise FileNotFoundError("One or more required files are missing.")
         
@@ -83,7 +82,6 @@ def upload_participants():
     if file.filename == '':
         return jsonify({"error": "No selected file"}), 400
 
-    # Make sure backend/files exists:
     files_dir = os.path.join('files')
     if not os.path.exists(files_dir):
         os.makedirs(files_dir)
@@ -107,7 +105,6 @@ def upload_questions():
     if file.filename == '':
         return jsonify({"error": "No selected file"}), 400
 
-    # Temporary path to store the uploaded Excel file
     temp_excel_path = os.path.join("files", "questions.xlsx")
     file.save(temp_excel_path)
 
