@@ -6,44 +6,33 @@ This project runs a Flask backend that serves your frontend app.
 
 1. **Clone the repository**
 
-   Make sure your folder structure looks like this:
-
-   ├── backend  
-   │   ├── app.py  
-   │   ├── routes  
-   │   │   └── submissions_route.py  
-   │   ├── files
-   │   │    └
-   │   ├── sub_status.py
-   └── frontend  
-       ├── index.html  
-       └── script.js, style.css, etc.
-
 2. **Open Backend Folder on CMD**
+   ```shell
     cd backend
 
-3. **Create and Activate Virtual Environment**  
+4. **Create and Activate Virtual Environment**  
    On Windows open a terminal in the `backend` folder and run:
 
    ```shell
    python -m venv .venv
    .venv\Scripts\activate
 
-4. **Install Dependencies**
+5. **Install Dependencies**
     In the same terminal, run the command:
-
+    ```shell
     pip install -r requirements.txt
-
-5. **Run the App**
+    ```
+6. **Run the App**
     Start the Flask server from the `backend` folder and run:
-
+    ```shell
+    .venv\Scripts\activate
     python app.py
-
+    ```
     Then
-
-    On Windows open another terminal in the `backend` folder and run:
-
+7. **On Windows open another terminal in the `backend` folder and run:**
+    ```shell
+    .venv\Scripts\activate
     python sub_status.py
-
+    ```
     Open your browser and navigate to http://127.0.0.1:5000/
     Your frontend will be served automatically.
