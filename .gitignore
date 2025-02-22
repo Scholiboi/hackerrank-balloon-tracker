@@ -1,0 +1,4 @@
+/backend/.venv
+/backend/files/*
+/backend/routes/__pycache__
+/test

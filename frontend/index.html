@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hackerrank Contest Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-primary: #1a73e8;
+            --color-secondary: #5f6368;
+            --color-background: #f8f9fa;
+            --color-surface: #ffffff;
+            --color-error: #d93025;
+            --color-success: #1e8e3e;
+            --color-border: #dadce0;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--color-background);
+            color: var(--color-secondary);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .app-header {
+            background: var(--color-surface);
+            padding: 1rem 0;
+            box-shadow: var(--shadow-sm);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            /* Enable positioning for the upload buttons */
+            position: relative;
+        }
+
+        .app-title {
+            color: var(--color-primary);
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: -0.025em;
+        }
+
+        /* New container for upload buttons */
+        .upload-buttons {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .upload-btn {
+            background-color: var(--color-primary);
+            color: #fff;
+            border: none;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .upload-btn:hover {
+            background-color: darken(var(--color-primary), 10%);
+        }
+
+        .app-main {
+            margin-top: 4rem;
+            padding: 1.5rem;
+            max-width: 1280px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .data-section {
+            background: var(--color-surface);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        #data-grid {
+            width: 100%;
+        }
+
+        .grid-header {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr 1.5fr 2fr 1fr 0.5fr;
+            gap: 1rem;
+            padding: 1rem;
+            background-color: var(--color-background);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .grid-header-cell {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--color-secondary);
+        }
+
+        .grid-body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .grid-row {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr 1.5fr 2fr 1fr 0.5fr;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid var(--color-border);
+            transition: background-color 0.2s;
+        }
+
+        .grid-row:hover {
+            background-color: var(--color-background);
+        }
+
+        .grid-cell {
+            display: flex;
+            align-items: center;
+            font-size: 0.875rem;
+        }
+
+        .text-mono {
+            font-family: 'SF Mono', monospace;
+            color: var(--color-primary);
+        }
+
+        .text-primary {
+            color: var(--color-secondary);
+            font-weight: 500;
+        }
+
+        .text-secondary {
+            color: var(--color-secondary);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            background-color: var(--color-background);
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+            opacity: 0.7;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            opacity: 1;
+            background-color: var(--color-background);
+        }
+
+        .given {
+            color: var(--color-success);
+        }
+
+        .not-given {
+            color: var(--color-error);
+        }
+
+        @media (max-width: 1024px) {
+            .grid-header,
+            .grid-row {
+                grid-template-columns: 1fr 1.5fr 1.5fr 1.5fr 1fr 0.5fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .status-container {
+                display: none;
+            }
+
+            .grid-header,
+            .grid-row {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.5rem;
+            }
+
+            .grid-header-cell:nth-child(n+3),
+            .grid-cell:nth-child(n+3) {
+                display: none;
+            }
+
+            .action-cell {
+                justify-content: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <h1 class="app-title">Code Uncode</h1>
+        <div class="upload-buttons">
+            <!-- "file" inputs for participants and questions -->
+            <input id="participantsFile" type="file" accept=".xlsx" style="display: none;" />
+            <button class="upload-btn" id="participantsUploadBtn">Upload Participants Sheet</button>
+
+            <input id="questionsFile" type="file" accept=".xlsx" style="display: none;" />
+            <button class="upload-btn" id="questionsUploadBtn">Upload Qs-Balloon Sheets</button>
+        </div>
+    </header>
+    
+    <main class="app-main">
+        <section class="data-section">
+            <!-- Dropdown for lab selection -->
+            <div class="filter-container" style="padding: 1rem;">
+                <label for="labSelect">Select Lab: </label>
+                <select id="labSelect">
+                    <option value="all">All Labs</option>
+                    <option value="Lab 1">Lab 1</option>
+                    <option value="Lab 2">Lab 2</option>
+                    <option value="Lab 3">Lab 3</option>
+                </select>
+            </div>
+            <div id="data-grid"></div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+    <!-- <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const dataGrid = document.getElementById('data-grid');
+            const labSelect = document.getElementById('labSelect');
+            let allData = [];
+
+            // Function to render grid giving filtered data
+            function renderGrid(data) {
+                // clear any existing content
+                dataGrid.innerHTML = "";
+                
+                // Create grid header
+                const gridHeader = document.createElement('div');
+                gridHeader.className = 'grid-header';
+                ['Hackerrank ID', 'Name', 'Location', 'Challenge', 'Balloon', ''].forEach(label => {
+                    const headerCell = document.createElement('div');
+                    headerCell.className = 'grid-header-cell';
+                    headerCell.textContent = label;
+                    gridHeader.appendChild(headerCell);
+                });
+                dataGrid.appendChild(gridHeader);
+
+                // Create grid body
+                const gridBody = document.createElement('div');
+                gridBody.className = 'grid-body';
+
+                data.forEach((item) => {
+                    const row = document.createElement('div');
+                    row.className = 'grid-row';
+
+                    const values = [
+                        { text: item.hacker_id, class: 'text-mono' },
+                        { text: item.Name, class: 'text-primary' },
+                        { text: `${item.Lab} ${item.Location}`, class: 'text-secondary' },
+                        { text: item.challenge, class: 'text-primary' },
+                        { text: item.colour, class: 'status-badge' }
+                    ];
+
+                    values.forEach(value => {
+                        const cell = document.createElement('div');
+                        cell.className = `grid-cell ${value.class}`;
+                        cell.textContent = value.text;
+                        row.appendChild(cell);
+                    });
+
+                    const actionCell = document.createElement('div');
+                    actionCell.className = 'grid-cell action-cell';
+                    const actionBtn = document.createElement('button');
+                    actionBtn.className = 'action-btn delete-action';
+                    actionBtn.innerHTML = '<span class="action-icon">❌</span>';
+                    actionBtn.addEventListener('click', () => row.remove());
+                    actionCell.appendChild(actionBtn);
+                    row.appendChild(actionCell);
+
+                    gridBody.appendChild(row);
+                });
+
+                dataGrid.appendChild(gridBody);
+            }
+
+            // Fetch JSON data
+            fetch('test.json')
+                .then(response => response.json())
+                .then(data => {
+                    allData = data;
+                    renderGrid(allData);
+                })
+                .catch(error => console.error('Error loading data:', error));
+
+            // Listen to changes in lab selection and filter data accordingly
+            labSelect.addEventListener('change', function() {
+                const selectedLab = this.value;
+                if (selectedLab === "all") {
+                    renderGrid(allData);
+                } else {
+                    const filteredData = allData.filter(item => item.Lab === selectedLab);
+                    renderGrid(filteredData);
+                }
+            });
+        });
+    </script> -->
+</body>
+</html>
