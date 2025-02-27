@@ -30,14 +30,14 @@ while(True):
         if submission['status'] != "Accepted":
             continue
         filtered_submission = {
-            "id": submission['id'],
-            "hacker_id": submission['hacker_id'],
-            "hacker_username": submission['hacker_username'],
-            "status": submission['status'],
-            "created_at": submission['created_at'],
-            "time_from_start": submission['time_from_start'],
-            "language": submission['language'],
-            "challenge": submission['challenge']['name'],
+            "id": str(submission['id']),
+            "hacker_id": str(submission['hacker_id']),
+            "hacker_username": str(submission['hacker_username']),
+            "status": str(submission['status']),
+            "created_at": str(submission['created_at']),
+            "time_from_start": str(submission['time_from_start']),
+            "language": str(submission['language']),
+            "challenge": str(submission['challenge']['name']),
             "Balloon": 'No'
         }
         filtered_submissions.append(filtered_submission)
