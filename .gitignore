@@ -1,4 +1,16 @@
-/backend/.venv
+# Python
+backend/.venv
+backend/__pycache__
+backend/routers/__pycache__
+backend/data/
+**/__pycache__
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# Environment (never commit real credentials)
+.env
+
+# Legacy (no longer used)
 /backend/files/*
-/backend/routes/__pycache__
-/test

@@ -1,0 +1,37 @@
+services:
+  backend:
+    build: ./backend
+    env_file: .env
+    volumes:
+      - sqlite_data:/app/data
+    expose:
+      - "8000"
+    networks:
+      - internal
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  frontend:
+    build: ./frontend
+    expose:
+      - "80"
+    networks:
+      - internal
+      - webproxy          # join nginx-proxy's network so it can reach us by name
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  sqlite_data:
+
+networks:
+  internal:
+    driver: bridge
+  webproxy:
+    external: true        # already exists — created by nginx-proxy's compose
