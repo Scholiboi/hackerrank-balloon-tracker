@@ -51,7 +51,7 @@ async def _poll_once(client: httpx.AsyncClient) -> None:
                     created_at=str(s["created_at"]),
                     time_from_start=str(s["time_from_start"]),
                     language=str(s["language"]),
-                    challenge=str(s["challenge"]["name"]),
+                    challenge=str(s["challenge"]["name"]).strip(),
                     balloon_given=False,
                 )
             )

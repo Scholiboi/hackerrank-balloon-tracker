@@ -5,6 +5,7 @@ import {
   createQuestion,
   deleteQuestion,
   getQuestions,
+  updateQuestion,
   uploadQuestions,
 } from "../api";
 
@@ -37,6 +38,11 @@ export default function Questions() {
   }
 
   useEffect(() => { load(); }, []);
+
+  async function handleEdit(id, field, value) {
+    const updated = await updateQuestion(id, { [field]: value });
+    setData((prev) => prev.map((r) => (r.id === id ? updated : r)));
+  }
 
   async function handleDelete(id) {
     if (!window.confirm("Delete this question?")) return;
@@ -166,7 +172,7 @@ export default function Questions() {
               className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 w-full sm:w-64"
             />
           </div>
-          <DataTable columns={COLUMNS} data={sorted} onDelete={handleDelete} loading={loading} sortBy={sortBy} sortOrder={sortOrder} onSort={handleSort} />
+          <DataTable columns={COLUMNS} data={sorted} onDelete={handleDelete} onEdit={handleEdit} loading={loading} sortBy={sortBy} sortOrder={sortOrder} onSort={handleSort} />
         </div>
       </div>
     </div>

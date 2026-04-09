@@ -5,6 +5,7 @@ import {
   createParticipant,
   deleteParticipant,
   getParticipants,
+  updateParticipant,
   uploadParticipants,
 } from "../api";
 
@@ -48,6 +49,11 @@ export default function Participants() {
   }
 
   useEffect(() => { load(); }, []);
+
+  async function handleEdit(id, field, value) {
+    const updated = await updateParticipant(id, { [field]: value });
+    setData((prev) => prev.map((r) => (r.id === id ? updated : r)));
+  }
 
   async function handleDelete(id) {
     if (!window.confirm("Delete this participant?")) return;
@@ -180,7 +186,7 @@ export default function Participants() {
               className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 w-full sm:w-80 lg:w-96"
             />
           </div>
-          <DataTable columns={COLUMNS} data={sorted} onDelete={handleDelete} loading={loading} sortBy={sortBy} sortOrder={sortOrder} onSort={handleSort} />
+          <DataTable columns={COLUMNS} data={sorted} onDelete={handleDelete} onEdit={handleEdit} loading={loading} sortBy={sortBy} sortOrder={sortOrder} onSort={handleSort} />
         </div>
       </div>
     </div>

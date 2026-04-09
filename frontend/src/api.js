@@ -31,6 +31,7 @@ export const lookupPortal = (q) =>
 export const getParticipants = () => api.get("/participants").then((r) => r.data);
 export const getLabs = () => api.get("/participants/labs").then((r) => r.data.labs);
 export const createParticipant = (data) => api.post("/participants", data).then((r) => r.data);
+export const updateParticipant = (id, data) => api.patch(`/participants/${id}`, data).then((r) => r.data);
 export const deleteParticipant = (id) => api.delete(`/participants/${id}`);
 export const uploadParticipants = (formData) =>
   api.post("/participants/upload", formData, {
@@ -40,6 +41,7 @@ export const uploadParticipants = (formData) =>
 // Questions
 export const getQuestions = () => api.get("/questions").then((r) => r.data);
 export const createQuestion = (data) => api.post("/questions", data).then((r) => r.data);
+export const updateQuestion = (id, data) => api.patch(`/questions/${id}`, data).then((r) => r.data);
 export const deleteQuestion = (id) => api.delete(`/questions/${id}`);
 export const uploadQuestions = (formData) =>
   api.post("/questions/upload", formData, {
@@ -58,4 +60,5 @@ export const checkIn = (hackerrank_id, check_in_type) =>
   api.post("/attendance/checkin", { hackerrank_id, check_in_type }).then((r) => r.data);
 export const qrScan = (payload) =>
   api.post("/attendance/qr-scan", payload).then((r) => r.data);
+export const updateAttendance = (id, data) => api.patch(`/attendance/${id}`, data).then((r) => r.data);
 export const undoCheckIn = (id) => api.delete(`/attendance/${id}`);

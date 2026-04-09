@@ -89,6 +89,28 @@ class AttendanceStats(BaseModel):
     not_checked_in: int
 
 
+# ── Partial update schemas ────────────────────────────────────────────────────
+
+class ParticipantUpdate(BaseModel):
+    hackerrank_id: Optional[str] = None
+    name: Optional[str] = None
+    email: Optional[str] = None
+    mobile: Optional[str] = None
+    lab: Optional[str] = None
+    seat: Optional[str] = None
+
+
+class QuestionUpdate(BaseModel):
+    challenge_name: Optional[str] = None
+    balloon_colour: Optional[str] = None
+
+
+class AttendanceUpdate(BaseModel):
+    hackerrank_id: Optional[str] = None
+    college_check_in_at: Optional[datetime] = None
+    lab_check_in_at: Optional[datetime] = None
+
+
 # ── Portal ───────────────────────────────────────────────────────────────────
 
 class PortalResult(BaseModel):

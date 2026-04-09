@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from auth import get_current_admin
 from database import get_db
 from models import Attendance, Participant
-from schemas import AttendanceRead, AttendanceStats
+from schemas import AttendanceRead, AttendanceStats, AttendanceUpdate
 
 router = APIRouter()
 
@@ -165,14 +165,14 @@ def qr_scan(
         raise HTTPException(status_code=404, detail="Participant not found")
 
     if scan_type == "lab":
-        record, already_in = _do_checkin(hid, db)
+        record, already_in = _do_checkin(hid, db, "lab")
         return {
             "action": "already_checked_in" if already_in else "checked_in",
             "hackerrank_id": record.hackerrank_id,
             "name": record.name,
             "lab": record.lab,
             "seat": record.seat,
-            "checked_in_at": record.checked_in_at.isoformat(),
+            "checked_in_at": (record.lab_check_in_at or record.college_check_in_at).isoformat(),
         }
 
     # scan_type == "seat"
@@ -185,6 +185,32 @@ def qr_scan(
         "seat": participant.seat,
         "checked_in": existing is not None,
     }
+
+
+@router.patch("/{attendance_id}", response_model=AttendanceRead)
+def update_attendance(
+    attendance_id: int,
+    body: AttendanceUpdate,
+    db: Session = Depends(get_db),
+    _: dict = Depends(get_current_admin),
+):
+    record = db.query(Attendance).filter_by(id=attendance_id).first()
+    if not record:
+        raise HTTPException(status_code=404, detail="Attendance record not found")
+    for field, value in body.model_dump(exclude_unset=True).items():
+        setattr(record, field, value)
+    db.commit()
+    db.refresh(record)
+    participant = db.query(Participant).filter_by(hackerrank_id=record.hackerrank_id).first()
+    return AttendanceRead(
+        id=record.id,
+        hackerrank_id=record.hackerrank_id,
+        college_check_in_at=record.college_check_in_at,
+        lab_check_in_at=record.lab_check_in_at,
+        name=participant.name if participant else None,
+        lab=participant.lab if participant else None,
+        seat=participant.seat if participant else None,
+    )
 
 
 @router.delete("/{attendance_id}", status_code=status.HTTP_204_NO_CONTENT)

@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from auth import get_current_admin
 from database import get_db
 from models import Participant
-from schemas import ParticipantCreate, ParticipantRead
+from schemas import ParticipantCreate, ParticipantRead, ParticipantUpdate
 
 router = APIRouter()
 
@@ -59,6 +59,23 @@ def create_participant(
         raise HTTPException(status_code=409, detail="HackerRank ID already exists")
     participant = Participant(**body.model_dump())
     db.add(participant)
+    db.commit()
+    db.refresh(participant)
+    return participant
+
+
+@router.patch("/{participant_id}", response_model=ParticipantRead)
+def update_participant(
+    participant_id: int,
+    body: ParticipantUpdate,
+    db: Session = Depends(get_db),
+    _: dict = Depends(get_current_admin),
+):
+    participant = db.query(Participant).filter_by(id=participant_id).first()
+    if not participant:
+        raise HTTPException(status_code=404, detail="Participant not found")
+    for field, value in body.model_dump(exclude_unset=True).items():
+        setattr(participant, field, value)
     db.commit()
     db.refresh(participant)
     return participant

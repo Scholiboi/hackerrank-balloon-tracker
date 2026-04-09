@@ -1,6 +1,13 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
-import { checkIn, getAttendance, getAttendanceStats, undoCheckIn } from "../api";
+import { checkIn, getAttendance, getAttendanceStats, undoCheckIn, updateAttendance } from "../api";
+
+function toDatetimeLocal(isoString) {
+  if (!isoString) return "";
+  const d = new Date(isoString);
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
 
 function StatCard({ label, value, colour }) {
   return (
@@ -8,6 +15,54 @@ function StatCard({ label, value, colour }) {
       <span className="text-2xl sm:text-3xl font-bold">{value}</span>
       <span className="text-xs font-medium mt-0.5 opacity-75 text-center">{label}</span>
     </div>
+  );
+}
+
+function EditableCell({ value, type = "text", onSave, className = "" }) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState("");
+
+  function start() {
+    setDraft(type === "datetime-local" ? toDatetimeLocal(value) : (value ?? ""));
+    setEditing(true);
+  }
+
+  async function commit() {
+    setEditing(false);
+    let parsed = draft;
+    if (type === "datetime-local") {
+      parsed = draft ? new Date(draft).toISOString() : null;
+    }
+    if (parsed !== value) await onSave(parsed);
+  }
+
+  function handleKeyDown(e) {
+    if (e.key === "Enter") { e.preventDefault(); commit(); }
+    if (e.key === "Escape") setEditing(false);
+  }
+
+  if (editing) {
+    return (
+      <input
+        autoFocus
+        type={type}
+        value={draft}
+        onChange={(e) => setDraft(e.target.value)}
+        onBlur={commit}
+        onKeyDown={handleKeyDown}
+        className="px-2 py-1 border border-brand-400 rounded text-xs focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white w-full min-w-[140px]"
+      />
+    );
+  }
+
+  return (
+    <span
+      onClick={start}
+      className={`cursor-text hover:bg-brand-50 px-1 py-0.5 rounded -mx-1 block ${className}`}
+      title="Click to edit"
+    >
+      {value || <span className="text-gray-300">—</span>}
+    </span>
   );
 }
 
@@ -32,6 +87,15 @@ export default function Attendance() {
   }, []);
 
   useEffect(() => { load(); }, [load]);
+
+  async function handleEdit(id, field, value) {
+    try {
+      const updated = await updateAttendance(id, { [field]: value });
+      setRecords((prev) => prev.map((r) => (r.id === id ? { ...r, ...updated } : r)));
+    } catch (err) {
+      alert(err?.response?.data?.detail || "Save failed.");
+    }
+  }
 
   async function handleCheckIn(e) {
     e.preventDefault();
@@ -158,15 +222,28 @@ export default function Attendance() {
                 <tbody className="divide-y divide-gray-50">
                   {filtered.map((r) => (
                     <tr key={r.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-4 py-3 font-mono text-brand-600 text-xs whitespace-nowrap">{r.hackerrank_id}</td>
+                      <td className="px-4 py-2 font-mono text-brand-600 text-xs whitespace-nowrap">
+                        <EditableCell
+                          value={r.hackerrank_id}
+                          onSave={(v) => handleEdit(r.id, "hackerrank_id", v)}
+                        />
+                      </td>
                       <td className="px-4 py-3 font-medium text-gray-800 whitespace-nowrap">{r.name || "—"}</td>
                       <td className="px-4 py-3 text-gray-600 whitespace-nowrap">{r.lab || "—"}</td>
                       <td className="px-4 py-3 text-gray-600 whitespace-nowrap">{r.seat || "—"}</td>
-                      <td className="px-4 py-3 text-gray-500 whitespace-nowrap text-xs">
-                        {r.college_check_in_at ? new Date(r.college_check_in_at).toLocaleTimeString() : "—"}
+                      <td className="px-4 py-2 text-gray-500 whitespace-nowrap text-xs">
+                        <EditableCell
+                          type="datetime-local"
+                          value={r.college_check_in_at ? new Date(r.college_check_in_at).toLocaleTimeString() : ""}
+                          onSave={(v) => handleEdit(r.id, "college_check_in_at", v)}
+                        />
                       </td>
-                      <td className="px-4 py-3 text-gray-500 whitespace-nowrap text-xs">
-                        {r.lab_check_in_at ? new Date(r.lab_check_in_at).toLocaleTimeString() : "—"}
+                      <td className="px-4 py-2 text-gray-500 whitespace-nowrap text-xs">
+                        <EditableCell
+                          type="datetime-local"
+                          value={r.lab_check_in_at ? new Date(r.lab_check_in_at).toLocaleTimeString() : ""}
+                          onSave={(v) => handleEdit(r.id, "lab_check_in_at", v)}
+                        />
                       </td>
                       <td className="px-4 py-3 text-right">
                         <button

@@ -112,20 +112,10 @@ export default function Portal() {
                   </div>
                 </div>
 
-                {(p.seat || p.location) && (
-                  <div className="pt-3 border-t border-gray-50 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {p.seat && (
-                      <div>
-                        <p className="text-xs text-gray-400 uppercase font-semibold mb-0.5">Seat</p>
-                        <p className="text-gray-700 text-sm font-medium">{p.seat}</p>
-                      </div>
-                    )}
-                    {p.location && (
-                      <div>
-                        <p className="text-xs text-gray-400 uppercase font-semibold mb-0.5">Location</p>
-                        <p className="text-gray-700 text-sm font-medium">{p.location}</p>
-                      </div>
-                    )}
+                {p.seat && (
+                  <div className="pt-3 border-t border-gray-50">
+                    <p className="text-xs text-gray-400 uppercase font-semibold mb-0.5">Seat</p>
+                    <p className="text-gray-700 text-sm font-medium">{p.seat}</p>
                   </div>
                 )}
               </div>
@@ -133,7 +123,18 @@ export default function Portal() {
           </div>
         )}
 
-        <p className="text-center text-xs text-gray-300 mt-10 pb-8">
+        <div className="flex justify-center mt-8">
+          <a
+            href="https://www.hackerrank.com/djsce-regionalsixseven"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-5 py-2.5 bg-brand-600 text-white text-sm font-medium rounded-lg hover:bg-brand-700 transition-colors"
+          >
+            Open Contest
+          </a>
+        </div>
+
+        <p className="text-center text-xs text-gray-300 mt-6 pb-8">
           Admin?{" "}
           <a href="/admin/login" className="text-brand-500 hover:underline">
             Sign in

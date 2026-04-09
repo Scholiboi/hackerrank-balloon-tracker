@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from auth import get_current_admin
 from database import get_db
 from models import Question
-from schemas import QuestionCreate, QuestionRead
+from schemas import QuestionCreate, QuestionRead, QuestionUpdate
 
 router = APIRouter()
 
@@ -40,6 +40,23 @@ def create_question(
         raise HTTPException(status_code=409, detail="Challenge already exists")
     question = Question(**body.model_dump())
     db.add(question)
+    db.commit()
+    db.refresh(question)
+    return question
+
+
+@router.patch("/{question_id}", response_model=QuestionRead)
+def update_question(
+    question_id: int,
+    body: QuestionUpdate,
+    db: Session = Depends(get_db),
+    _: dict = Depends(get_current_admin),
+):
+    question = db.query(Question).filter_by(id=question_id).first()
+    if not question:
+        raise HTTPException(status_code=404, detail="Question not found")
+    for field, value in body.model_dump(exclude_unset=True).items():
+        setattr(question, field, value)
     db.commit()
     db.refresh(question)
     return question

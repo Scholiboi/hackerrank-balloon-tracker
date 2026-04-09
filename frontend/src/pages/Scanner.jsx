@@ -4,8 +4,8 @@ import Navbar from "../components/Navbar";
 import { qrScan } from "../api";
 
 const SCAN_TYPES = [
-  { value: "lab", label: "Lab Entry", description: "Scan at the entry gate to check in the participant" },
-  { value: "seat", label: "Seat Verify", description: "Scan at the lab to verify seat assignment" },
+  { value: "lab", label: "College Entry", description: "Scan at the entry gate to check in the participant" },
+  { value: "seat", label: "Lab Entry", description: "Scan at the lab to verify seat assignment" },
 ];
 
 function ResultCard({ result, onDismiss }) {
