@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import { checkIn, getAttendance, getAttendanceStats, undoCheckIn, updateAttendance } from "../api";
+import { Search, UserCheck, Users, XCircle, Clock, Trash2 } from "lucide-react";
 
 function toDatetimeLocal(isoString) {
   if (!isoString) return "";
@@ -11,9 +12,9 @@ function toDatetimeLocal(isoString) {
 
 function StatCard({ label, value, colour }) {
   return (
-    <div className={`rounded-xl p-4 sm:p-5 ${colour} flex flex-col items-center justify-center flex-1 min-w-[90px]`}>
-      <span className="text-2xl sm:text-3xl font-bold">{value}</span>
-      <span className="text-xs font-medium mt-0.5 opacity-75 text-center">{label}</span>
+    <div className={`neo-card p-4 sm:p-6 ${colour} flex flex-col items-center justify-center flex-1 min-w-[120px]`}>
+      <span className="text-3xl sm:text-4xl font-black">{value}</span>
+      <span className="text-xs font-black uppercase mt-1 tracking-wider opacity-60 text-center">{label}</span>
     </div>
   );
 }
@@ -50,7 +51,7 @@ function EditableCell({ value, type = "text", onSave, className = "" }) {
         onChange={(e) => setDraft(e.target.value)}
         onBlur={commit}
         onKeyDown={handleKeyDown}
-        className="px-2 py-1 border border-brand-400 rounded text-xs focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white w-full min-w-[140px]"
+        className="px-2 py-1 border-2 border-black rounded font-bold text-xs focus:outline-none bg-white w-full min-w-[140px]"
       />
     );
   }
@@ -58,10 +59,10 @@ function EditableCell({ value, type = "text", onSave, className = "" }) {
   return (
     <span
       onClick={start}
-      className={`cursor-text hover:bg-brand-50 px-1 py-0.5 rounded -mx-1 block ${className}`}
+      className={`cursor-text hover:bg-neo-yellow/30 px-2 py-1 rounded-lg border-2 border-transparent hover:border-black/5 transition-all block font-bold truncate ${className}`}
       title="Click to edit"
     >
-      {value || <span className="text-gray-300">—</span>}
+      {value || <span className="text-black/20 italic">empty</span>}
     </span>
   );
 }
@@ -133,134 +134,138 @@ export default function Attendance() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <Navbar />
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-5 sm:py-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Attendance</h2>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+        <h2 className="text-3xl font-black text-black mb-8 tracking-tight uppercase">Attendance Management</h2>
 
         {/* Stats */}
         {stats && (
-          <div className="flex gap-3 mb-5">
-            <StatCard label="Total" value={stats.total_participants} colour="bg-gray-100 text-gray-700" />
-            <StatCard label="Checked In" value={stats.checked_in} colour="bg-green-100 text-green-700" />
-            <StatCard label="Not In" value={stats.not_checked_in} colour="bg-amber-100 text-amber-700" />
+          <div className="flex flex-wrap gap-4 mb-8">
+            <StatCard label="Total Contestants" value={stats.total_participants} colour="bg-neo-blue" />
+            <StatCard label="In Building" value={stats.checked_in} colour="bg-neo-green" />
+            <StatCard label="In Lab" value={stats.lab_checked_in || 0} colour="bg-neo-yellow" />
+            <StatCard label="Absent" value={stats.not_checked_in} colour="bg-neo-red" />
           </div>
         )}
 
         {/* Check-in form */}
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 sm:p-5 mb-4">
-          <p className="text-sm font-semibold text-gray-700 mb-3">Quick Check-In</p>
-          <form onSubmit={handleCheckIn} className="space-y-3">
-            <input
-              value={checkInInput}
-              onChange={(e) => setCheckInInput(e.target.value)}
-              placeholder="HackerRank ID…"
-              autoFocus
-              className="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
-            />
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-              <label className="flex items-center gap-2 text-sm cursor-pointer">
-                <input type="radio" name="checkInType" value="college" checked={checkInType === "college"} onChange={(e) => setCheckInType(e.target.value)} className="accent-brand-600" />
-                <span>College Check-In</span>
-              </label>
-              <label className="flex items-center gap-2 text-sm cursor-pointer">
-                <input type="radio" name="checkInType" value="lab" checked={checkInType === "lab"} onChange={(e) => setCheckInType(e.target.value)} className="accent-brand-600" />
-                <span>Lab Check-In</span>
-              </label>
+        <div className="neo-card p-6 mb-8 bg-white">
+          <p className="text-sm font-black text-black uppercase mb-4 flex items-center gap-2">
+            <UserCheck className="w-4 h-4" />
+            Express Check-In
+          </p>
+          <form onSubmit={handleCheckIn} className="space-y-4">
+            <div className="relative">
+              <input
+                value={checkInInput}
+                onChange={(e) => setCheckInInput(e.target.value)}
+                placeholder="Type HackerRank ID…"
+                autoFocus
+                className="w-full px-4 py-4 rounded-xl border-3 border-black text-lg font-black bg-white shadow-neo focus:shadow-neo-lg outline-none transition-all placeholder-black/30"
+              />
+            </div>
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-6">
+                <label className="flex items-center gap-2 text-sm font-black cursor-pointer group">
+                  <div className={`w-5 h-5 border-3 border-black rounded-full flex items-center justify-center transition-all ${checkInType === "college" ? "bg-neo-green" : "bg-white"}`}>
+                    {checkInType === "college" && <div className="w-1.5 h-1.5 bg-black rounded-full" />}
+                  </div>
+                  <input type="radio" name="checkInType" value="college" checked={checkInType === "college"} onChange={(e) => setCheckInType(e.target.value)} className="hidden" />
+                  <span>COLENGE</span>
+                </label>
+                <label className="flex items-center gap-2 text-sm font-black cursor-pointer group">
+                  <div className={`w-5 h-5 border-3 border-black rounded-full flex items-center justify-center transition-all ${checkInType === "lab" ? "bg-neo-blue" : "bg-white"}`}>
+                    {checkInType === "lab" && <div className="w-1.5 h-1.5 bg-black rounded-full" />}
+                  </div>
+                  <input type="radio" name="checkInType" value="lab" checked={checkInType === "lab"} onChange={(e) => setCheckInType(e.target.value)} className="hidden" />
+                  <span>LAB</span>
+                </label>
+              </div>
               <button
                 type="submit"
-                className="ml-auto px-5 py-2 bg-brand-600 text-white text-sm font-medium rounded-lg hover:bg-brand-700 transition-colors"
+                className="neo-btn bg-black text-white px-8 py-3 uppercase tracking-widest text-sm"
               >
-                Check In
+                Confirm
               </button>
             </div>
           </form>
           {checkInError && (
-            <div className="mt-2 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
-              <p className="text-sm text-red-600">{checkInError}</p>
+            <div className="mt-4 neo-badge bg-neo-red w-full justify-center py-2 shadow-none border-dashed border-2">
+              <XCircle className="w-4 h-4 mr-2" /> {checkInError}
             </div>
           )}
           {checkInSuccess && (
-            <div className="mt-2 bg-green-50 border border-green-100 rounded-lg px-3 py-2">
-              <p className="text-sm text-green-700">{checkInSuccess}</p>
+            <div className="mt-4 neo-badge bg-neo-green w-full justify-center py-2 shadow-none border-dashed border-2">
+              <UserCheck className="w-4 h-4 mr-2" /> {checkInSuccess}
             </div>
           )}
         </div>
 
         {/* Search + table */}
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-100 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <span className="text-sm text-gray-500 font-medium">
-              {filtered.length} of {records.length} shown
-            </span>
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Filter by name / ID / lab…"
-              className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 w-full sm:w-64"
-            />
+        <div className="neo-card overflow-hidden bg-white">
+          <div className="px-6 py-4 border-b-3 border-black bg-neo-yellow/20 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-2">
+              <Users className="w-5 h-5" />
+              <span className="text-sm font-black italic">
+                {filtered.length} matching participants
+              </span>
+            </div>
+            <div className="relative w-full sm:w-80">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-black" />
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search..."
+                className="w-full pl-10 pr-4 py-2 border-3 border-black rounded-xl font-bold bg-white outline-none focus:shadow-neo transition-all"
+              />
+            </div>
           </div>
-
-          {loading ? (
-            <div className="flex justify-center py-12 text-gray-400">Loading…</div>
-          ) : filtered.length === 0 ? (
-            <div className="flex justify-center py-12 text-gray-400">
-              {records.length === 0 ? "No check-ins yet." : "No results match your filter."}
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-100 text-sm">
-                <thead className="bg-gray-50">
-                  <tr>
-                    {["HackerRank ID", "Name", "Lab", "Seat", "College Check-In", "Lab Check-In", ""].map((h) => (
-                      <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">
-                        {h}
-                      </th>
-                    ))}
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-sm">
+              <thead className="bg-black/5 border-b-2 border-black">
+                <tr>
+                  <th className="px-6 py-4 text-left font-black uppercase tracking-wider">ID</th>
+                  <th className="px-6 py-4 text-left font-black uppercase tracking-wider">Name</th>
+                  <th className="px-6 py-4 text-left font-black uppercase tracking-wider">Lab</th>
+                  <th className="px-6 py-4 text-left font-black uppercase tracking-wider">College Log</th>
+                  <th className="px-6 py-4 text-left font-black uppercase tracking-wider">Lab Log</th>
+                  <th className="px-6 py-4 text-center font-black uppercase tracking-wider">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y-2 divide-black/5">
+                {filtered.map((r) => (
+                  <tr key={r.id} className="hover:bg-neo-yellow/5">
+                    <td className="px-6 py-4 font-black font-mono text-xs">{r.hackerrank_id}</td>
+                    <td className="px-6 py-4">
+                      <EditableCell value={r.name} onSave={(v) => handleEdit(r.id, "name", v)} />
+                    </td>
+                    <td className="px-6 py-4">
+                      <EditableCell value={r.lab} onSave={(v) => handleEdit(r.id, "lab", v)} />
+                    </td>
+                    <td className="px-6 py-4">
+                      <EditableCell value={r.college_check_in_at} type="datetime-local" onSave={(v) => handleEdit(r.id, "college_check_in_at", v)} className="font-mono text-[11px]" />
+                    </td>
+                    <td className="px-6 py-4">
+                      <EditableCell value={r.lab_check_in_at} type="datetime-local" onSave={(v) => handleEdit(r.id, "lab_check_in_at", v)} className="font-mono text-[11px]" />
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <button
+                        onClick={() => handleUndo(r.id)}
+                        className="p-2 border-2 border-black rounded-lg hover:bg-neo-red transition-colors"
+                        title="Undo check-in"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-50">
-                  {filtered.map((r) => (
-                    <tr key={r.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-4 py-2 font-mono text-brand-600 text-xs whitespace-nowrap">
-                        <EditableCell
-                          value={r.hackerrank_id}
-                          onSave={(v) => handleEdit(r.id, "hackerrank_id", v)}
-                        />
-                      </td>
-                      <td className="px-4 py-3 font-medium text-gray-800 whitespace-nowrap">{r.name || "—"}</td>
-                      <td className="px-4 py-3 text-gray-600 whitespace-nowrap">{r.lab || "—"}</td>
-                      <td className="px-4 py-3 text-gray-600 whitespace-nowrap">{r.seat || "—"}</td>
-                      <td className="px-4 py-2 text-gray-500 whitespace-nowrap text-xs">
-                        <EditableCell
-                          type="datetime-local"
-                          value={r.college_check_in_at ? new Date(r.college_check_in_at).toLocaleTimeString() : ""}
-                          onSave={(v) => handleEdit(r.id, "college_check_in_at", v)}
-                        />
-                      </td>
-                      <td className="px-4 py-2 text-gray-500 whitespace-nowrap text-xs">
-                        <EditableCell
-                          type="datetime-local"
-                          value={r.lab_check_in_at ? new Date(r.lab_check_in_at).toLocaleTimeString() : ""}
-                          onSave={(v) => handleEdit(r.id, "lab_check_in_at", v)}
-                        />
-                      </td>
-                      <td className="px-4 py-3 text-right">
-                        <button
-                          onClick={() => handleUndo(r.id)}
-                          className="text-xs text-red-400 hover:text-red-600 transition-colors px-2 py-1 rounded hover:bg-red-50"
-                        >
-                          Undo
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
   );
 }
+

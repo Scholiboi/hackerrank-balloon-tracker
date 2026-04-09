@@ -2,10 +2,23 @@ import React, { useEffect, useRef, useState } from "react";
 import { Html5Qrcode } from "html5-qrcode";
 import Navbar from "../components/Navbar";
 import { qrScan } from "../api";
+import { QrCode, Camera, CameraOff, CheckCircle2, AlertCircle, X, ShieldCheck, MapPin, User, Loader2 } from "lucide-react";
 
 const SCAN_TYPES = [
-  { value: "lab", label: "College Entry", description: "Scan at the entry gate to check in the participant" },
-  { value: "seat", label: "Lab Entry", description: "Scan at the lab to verify seat assignment" },
+  { 
+    value: "lab", 
+    label: "Gate Check-in", 
+    description: "Verify participant arrival at the main entrance",
+    color: "bg-neo-green",
+    icon: ShieldCheck
+  },
+  { 
+    value: "seat", 
+    label: "Lab Verify", 
+    description: "Scan inside specific labs for seat allocation",
+    color: "bg-neo-blue",
+    icon: MapPin
+  },
 ];
 
 function ResultCard({ result, onDismiss }) {
@@ -14,17 +27,11 @@ function ResultCard({ result, onDismiss }) {
   const isError = result.type === "error";
   const isAlready = result.action === "already_checked_in";
 
-  const bg = isError
-    ? "bg-red-50 border-red-200"
+  const colorClass = isError
+    ? "bg-neo-red"
     : isAlready
-    ? "bg-amber-50 border-amber-200"
-    : "bg-green-50 border-green-200";
-
-  const badge = isError
-    ? "bg-red-100 text-red-700"
-    : isAlready
-    ? "bg-amber-100 text-amber-700"
-    : "bg-green-100 text-green-700";
+    ? "bg-neo-yellow"
+    : "bg-neo-green";
 
   const statusText = isError
     ? "Error"
@@ -35,41 +42,71 @@ function ResultCard({ result, onDismiss }) {
     : "Seat Info";
 
   return (
-    <div className={`rounded-xl border p-4 ${bg}`}>
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${badge}`}>
-            {statusText}
-          </span>
+    <div className={`neo-card ${colorClass} p-5 relative mt-4`}>
+      <button 
+        onClick={onDismiss} 
+        className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full bg-black text-white hover:scale-110 transition-transform shadow-neo-sm"
+      >
+        <X className="w-5 h-5" />
+      </button>
+
+      <div className="flex items-start gap-4">
+        <div className="w-12 h-12 rounded-xl bg-black flex items-center justify-center shrink-0 shadow-neo-sm">
           {isError ? (
-            <p className="mt-2 text-sm text-red-700">{result.message}</p>
+            <AlertCircle className="text-white w-6 h-6" />
           ) : (
-            <div className="mt-2 space-y-1">
-              <p className="font-semibold text-gray-900">{result.name}</p>
-              <p className="text-xs font-mono text-gray-500">{result.hackerrank_id}</p>
-              <div className="flex gap-4 mt-1">
+            <CheckCircle2 className="text-white w-6 h-6" />
+          )}
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 bg-black text-white rounded">
+              {statusText}
+            </span>
+          </div>
+
+          {isError ? (
+            <p className="font-black text-sm uppercase italic">{result.message}</p>
+          ) : (
+            <div className="space-y-3">
+              <div>
+                <h3 className="text-xl font-black text-black uppercase truncate leading-tight">
+                  {result.name}
+                </h3>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <User className="w-3 h-3 text-black/40" />
+                  <p className="text-xs font-black font-mono text-black/40 uppercase">
+                    {result.hackerrank_id}
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
                 {result.lab && (
-                  <span className="text-sm text-gray-600">
-                    <span className="font-medium">Lab:</span> {result.lab}
-                  </span>
+                  <div className="bg-black/5 rounded-lg p-2 border-2 border-dashed border-black/20">
+                    <p className="text-[10px] font-black uppercase text-black/40">Lab</p>
+                    <p className="text-sm font-black text-black">{result.lab}</p>
+                  </div>
                 )}
                 {result.seat && (
-                  <span className="text-sm text-gray-600">
-                    <span className="font-medium">Seat:</span> {result.seat}
-                  </span>
+                  <div className="bg-black/5 rounded-lg p-2 border-2 border-dashed border-black/20">
+                    <p className="text-[10px] font-black uppercase text-black/40">Seat</p>
+                    <p className="text-sm font-black text-black">{result.seat}</p>
+                  </div>
                 )}
               </div>
+
               {result.action === "seat_info" && (
-                <p className={`text-xs font-semibold mt-1 ${result.checked_in ? "text-green-600" : "text-amber-600"}`}>
-                  {result.checked_in ? "Participant has checked in at the gate" : "Not yet checked in at the gate"}
-                </p>
+                <div className={`neo-badge w-full justify-center py-2 ${result.checked_in ? "bg-black text-white" : "bg-white/50 border-dashed"}`}>
+                  <p className="text-[10px] font-black uppercase italic">
+                    {result.checked_in ? "Verified at Gate" : "Awaiting Gate Check-in"}
+                  </p>
+                </div>
               )}
             </div>
           )}
         </div>
-        <button onClick={onDismiss} className="text-gray-400 hover:text-gray-600 text-lg leading-none ml-2">
-          ×
-        </button>
       </div>
     </div>
   );
@@ -84,7 +121,6 @@ export default function Scanner() {
   const html5QrRef = useRef(null);
   const lastScannedRef = useRef(null);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (html5QrRef.current) {
@@ -102,13 +138,13 @@ export default function Scanner() {
     try {
       await qr.start(
         { facingMode: "environment" },
-        { fps: 10, qrbox: { width: 250, height: 250 } },
+        { fps: 15, qrbox: { width: 250, height: 250 } },
         onScanSuccess,
         () => {}
       );
     } catch {
       setScanning(false);
-      setResult({ type: "error", message: "Could not access camera. Please allow camera permissions." });
+      setResult({ type: "error", message: "Camera access denied. Check permissions." });
     }
   }
 
@@ -121,7 +157,6 @@ export default function Scanner() {
   }
 
   async function onScanSuccess(decodedText) {
-    // Debounce — ignore repeated scans of the same code within 3 seconds
     if (lastScannedRef.current === decodedText) return;
     lastScannedRef.current = decodedText;
     setTimeout(() => { lastScannedRef.current = null; }, 3000);
@@ -132,12 +167,12 @@ export default function Scanner() {
       try {
         payload = JSON.parse(decodedText);
       } catch {
-        setResult({ type: "error", message: "Invalid QR code format — expected JSON." });
+        setResult({ type: "error", message: "Invalid code format." });
         return;
       }
 
       if (!payload.hackerrank_id) {
-        setResult({ type: "error", message: 'QR code missing "hackerrank_id" field.' });
+        setResult({ type: "error", message: "Missing ID." });
         return;
       }
 
@@ -146,7 +181,7 @@ export default function Scanner() {
     } catch (err) {
       setResult({
         type: "error",
-        message: err.response?.data?.detail || "Scan failed. Please try again.",
+        message: err.response?.data?.detail || "Scan request failed.",
       });
     } finally {
       setProcessing(false);
@@ -154,74 +189,130 @@ export default function Scanner() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <Navbar />
-      <div className="max-w-lg mx-auto px-6 py-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-1">QR Scanner</h2>
-        <p className="text-sm text-gray-500 mb-5">Scan participant QR codes for lab check-in or seat verification</p>
+      <div className="max-w-lg mx-auto px-6 py-8">
+        <div className="flex items-center gap-3 mb-8">
+          <div className="w-12 h-12 bg-black rounded-xl flex items-center justify-center shadow-neo rotate-3 shrink-0">
+            <QrCode className="text-neo-pink w-6 h-6" />
+          </div>
+          <div>
+            <h2 className="text-3xl font-black text-black uppercase italic leading-none">Security</h2>
+            <p className="text-[10px] font-black uppercase text-black/40 mt-1 tracking-widest">
+              Live Credential Verification
+            </p>
+          </div>
+        </div>
 
         {/* Mode selector */}
-        <div className="grid grid-cols-2 gap-3 mb-5">
+        <div className="grid grid-cols-2 gap-4 mb-8">
           {SCAN_TYPES.map((t) => (
             <button
               key={t.value}
               onClick={() => { setScanType(t.value); setResult(null); }}
               disabled={scanning}
-              className={`rounded-xl border p-4 text-left transition-colors ${
+              className={`neo-card p-5 text-left transition-all relative overflow-hidden group ${
                 scanType === t.value
-                  ? "border-brand-500 bg-brand-50"
-                  : "border-gray-200 bg-white hover:bg-gray-50"
-              } disabled:opacity-50 disabled:cursor-not-allowed`}
+                  ? `${t.color} scale-[0.98] shadow-none`
+                  : "bg-white hover:bg-gray-50 opacity-60"
+              } disabled:cursor-not-allowed`}
             >
-              <p className={`font-semibold text-sm ${scanType === t.value ? "text-brand-700" : "text-gray-700"}`}>
+              <div className="flex justify-between items-start mb-4">
+                <div className="w-10 h-10 rounded-lg bg-black flex items-center justify-center shadow-neo-sm">
+                  <t.icon className={`w-5 h-5 ${scanType === t.value ? "text-white" : "text-white/40"}`} />
+                </div>
+                {scanType === t.value && (
+                  <div className="w-2 h-2 rounded-full bg-black animate-pulse" />
+                )}
+              </div>
+              <p className="font-black text-xs uppercase italic text-black leading-tight mb-1">
                 {t.label}
               </p>
-              <p className="text-xs text-gray-400 mt-0.5">{t.description}</p>
+              <p className="text-[9px] font-black uppercase text-black/40 leading-relaxed">
+                {t.description}
+              </p>
             </button>
           ))}
         </div>
 
         {/* Scanner viewport */}
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden mb-4">
-          <div id="qr-reader" ref={scannerRef} className={scanning ? "block" : "hidden"} />
+        <div className="neo-card bg-black shadow-neo-lg overflow-hidden relative aspect-square max-w-[340px] mx-auto mb-8">
+          <div id="qr-reader" ref={scannerRef} className={`${scanning ? "block" : "hidden"} w-full h-full`} />
+          
           {!scanning && (
-            <div className="flex flex-col items-center justify-center py-14 text-gray-400">
-              <svg className="w-12 h-12 mb-3 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                  d="M3 9V5a2 2 0 012-2h4M3 15v4a2 2 0 002 2h4m6-18h4a2 2 0 012 2v4m0 6v4a2 2 0 01-2 2h-4M9 9h.01M15 9h.01M9 15h.01M15 15h.01" />
-              </svg>
-              <p className="text-sm">Camera inactive</p>
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-white/20 p-8 text-center">
+              <CameraOff className="w-16 h-16 mb-4 stroke-[1.5]" />
+              <p className="font-black uppercase italic text-xs tracking-widest underline decoration-neo-red decoration-2">
+                Scanner Suspended
+              </p>
+            </div>
+          )}
+
+          {/* Scanner Overlay UI */}
+          {scanning && (
+            <div className="absolute inset-0 pointer-events-none border-[40px] border-black/60 flex items-center justify-center">
+              <div className="w-full h-full border-2 border-neo-green/50 relative">
+                <div className="absolute top-0 left-0 w-4 h-4 border-t-4 border-l-4 border-neo-green" />
+                <div className="absolute top-0 right-0 w-4 h-4 border-t-4 border-r-4 border-neo-green" />
+                <div className="absolute bottom-0 left-0 w-4 h-4 border-b-4 border-l-4 border-neo-green" />
+                <div className="absolute bottom-0 right-0 w-4 h-4 border-b-4 border-r-4 border-neo-green" />
+                
+                {/* Scanning line animation */}
+                <div className="absolute top-0 left-0 w-full h-[2px] bg-neo-green/80 shadow-[0_0_15px_rgba(142,214,112,0.8)] animate-[scan_2s_linear_infinite]" />
+              </div>
             </div>
           )}
         </div>
 
-        {/* Processing indicator */}
+        {/* Processing State */}
         {processing && (
-          <div className="text-center text-sm text-brand-600 font-medium mb-3">Processing scan…</div>
+          <div className="neo-badge bg-black text-white w-full justify-center py-4 mb-4 gap-3 animate-pulse">
+            <Loader2 className="w-5 h-5 animate-spin text-neo-blue" />
+            <p className="text-xs font-black uppercase tracking-widest italic">Decrypting...</p>
+          </div>
         )}
 
         {/* Result */}
         <ResultCard result={result} onDismiss={() => setResult(null)} />
 
-        {/* Controls */}
-        <div className="mt-4 flex gap-3">
+        {/* Start/Stop Controls */}
+        <div className="mt-8">
           {!scanning ? (
             <button
               onClick={startScanner}
-              className="flex-1 py-2.5 bg-brand-600 text-white text-sm font-medium rounded-lg hover:bg-brand-700 transition-colors"
+              className="neo-btn w-full py-5 bg-black text-white uppercase italic tracking-[0.2em] shadow-neo-lg hover:bg-neo-green hover:text-black transition-all group"
             >
-              Start Camera
+              <Camera className="w-6 h-6 group-hover:rotate-12 transition-transform" />
+              Initialize Lens
             </button>
           ) : (
             <button
               onClick={stopScanner}
-              className="flex-1 py-2.5 bg-red-500 text-white text-sm font-medium rounded-lg hover:bg-red-600 transition-colors"
+              className="neo-btn w-full py-5 bg-neo-red text-black uppercase italic tracking-[0.2em] shadow-none border-dashed"
             >
-              Stop Camera
+              <CameraOff className="w-6 h-6" />
+              Cease Operation
             </button>
           )}
         </div>
+
+        <p className="text-center mt-12 text-[9px] font-black uppercase text-black/20 tracking-[0.3em]">
+          Automated Enforcement System v2.4
+        </p>
       </div>
+      
+      <style>{`
+        @keyframes scan {
+          0% { top: 0; }
+          100% { top: 100%; }
+        }
+        #qr-reader video {
+          object-fit: cover !important;
+          width: 100% !important;
+          height: 100% !important;
+        }
+      `}</style>
     </div>
   );
 }
+

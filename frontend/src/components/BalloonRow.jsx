@@ -1,21 +1,22 @@
 import React from "react";
+import { Check, Loader2 } from "lucide-react";
 
 const COLOUR_MAP = {
-  red: "bg-red-100 text-red-700",
-  blue: "bg-blue-100 text-blue-700",
-  green: "bg-green-100 text-green-700",
-  yellow: "bg-yellow-100 text-yellow-700",
-  orange: "bg-orange-100 text-orange-700",
-  purple: "bg-purple-100 text-purple-700",
-  pink: "bg-pink-100 text-pink-700",
-  white: "bg-gray-100 text-gray-700",
+  red: "bg-[#FF5D5D] text-black",
+  blue: "bg-[#7CC5D9] text-black",
+  green: "bg-[#8ED670] text-black",
+  yellow: "bg-[#B8F0C8] text-black",
+  orange: "bg-[#FFB347] text-black",
+  purple: "bg-[#B19CD9] text-black",
+  pink: "bg-[#FEBDD2] text-black",
+  white: "bg-white text-black",
 };
 
 function BalloonBadge({ colour }) {
   const lower = (colour || "").toLowerCase();
-  const cls = COLOUR_MAP[lower] || "bg-gray-100 text-gray-600";
+  const cls = COLOUR_MAP[lower] || "bg-white text-black";
   return (
-    <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold capitalize ${cls}`}>
+    <span className={`neo-badge lowercase py-1 px-3 ${cls}`}>
       {colour || "—"}
     </span>
   );
@@ -30,37 +31,40 @@ export default function BalloonRow({ submission, onTick, ticking }) {
     .padStart(2, "0");
 
   return (
-    <tr className="hover:bg-gray-50 transition-colors">
-      <td className="px-4 py-3 text-gray-500 font-mono text-xs whitespace-nowrap">
+    <tr className="hover:bg-neo-yellow/5 transition-colors border-b-2 border-black/5">
+      <td className="px-6 py-4 font-black font-mono text-xs text-black/60 whitespace-nowrap">
         {mins}:{secs}
       </td>
-      <td className="px-4 py-3 text-brand-600 font-mono text-xs whitespace-nowrap">
-        {submission.hackerrank_id}
+      <td className="px-6 py-4 font-black font-mono text-xs text-black whitespace-nowrap">
+        <span className="bg-neo-blue/20 px-2 py-1 rounded border-2 border-black/10">
+          {submission.hackerrank_id}
+        </span>
       </td>
-      <td className="px-4 py-3 text-gray-800 font-medium whitespace-nowrap">
+      <td className="px-6 py-4 font-black text-black whitespace-nowrap text-base">
         {submission.name}
       </td>
-      <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
+      <td className="px-6 py-4 font-bold text-black/80 whitespace-nowrap uppercase">
         {submission.lab}
       </td>
-      <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
+      <td className="px-6 py-4 font-bold text-black/80 whitespace-nowrap uppercase">
         {submission.seat || "—"}
       </td>
-      <td className="px-4 py-3 text-gray-700 max-w-xs truncate">
+      <td className="px-6 py-4 font-bold text-black/70 max-w-xs truncate italic">
         {submission.challenge}
       </td>
-      <td className="px-4 py-3">
+      <td className="px-6 py-4">
         <BalloonBadge colour={submission.balloon_colour} />
       </td>
-      <td className="px-4 py-3 text-right">
+      <td className="px-6 py-4 text-right">
         <button
           disabled={ticking}
           onClick={() => onTick(submission.submission_id)}
-          className="px-3 py-1 rounded-md bg-green-600 text-white text-xs font-medium hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="neo-btn bg-neo-green py-2 px-4 shadow-neo text-xs uppercase tracking-wider"
         >
-          {ticking ? "…" : "Delivered"}
+          {ticking ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Check className="w-4 h-4" /> Delivered</>}
         </button>
       </td>
     </tr>
   );
 }
+

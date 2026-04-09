@@ -2,6 +2,87 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: 'Inter', -apple-system, sans-serif;
+@layer base {
+  :root {
+    --background: 147 62% 83%; /* #B8F0C8 */
+    --foreground: 0 0% 0%;
+    --primary: 0 0% 0%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 100%;
+    --accent: 341 97% 87%; /* #FEBDD2 */
+    --muted: 0 0% 95%;
+    --border: 0 0% 0%;
+    --radius: 0.75rem;
+
+    /* Neo-Brutalist Palette */
+    --neo-yellow: #B8F0C8;
+    --neo-pink: #FEBDD2;
+    --neo-green: #8ED670;
+    --neo-blue: #7CC5D9;
+    --neo-red: #FA5D5D;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    color: #000;
+    background-color: var(--neo-yellow);
+    background-image: radial-gradient(rgba(0,0,0,0.08) 1px, transparent 1px);
+    background-size: 20px 20px;
+    font-family: system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
 }
+
+@layer components {
+  .neo-card {
+    background-color: #fff;
+    border: 3px solid #000;
+    border-radius: 1rem;
+    box-shadow: 4px 4px 0px 0px #000;
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+  }
+
+  .neo-card-hover:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0px 0px #000;
+  }
+
+  .neo-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: 3px solid #000;
+    border-radius: 0.75rem;
+    background-color: #fff;
+    font-weight: 700;
+    box-shadow: 4px 4px 0px 0px #000;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+    cursor: pointer;
+  }
+
+  .neo-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0px 0px #000;
+  }
+
+  .neo-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: none;
+  }
+
+  .neo-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.75rem;
+    border: 2px solid #000;
+    border-radius: 9999px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    box-shadow: 2px 2px 0 0 #000;
+  }
+}
+
+

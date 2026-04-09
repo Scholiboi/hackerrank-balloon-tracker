@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { ArrowUp, ArrowDown, Trash2, Loader2 } from "lucide-react";
 
 export default function DataTable({ columns, data, onDelete, onEdit, loading, sortBy, sortOrder, onSort }) {
   const [editCell, setEditCell] = useState(null); // { rowId, colKey }
@@ -6,11 +7,20 @@ export default function DataTable({ columns, data, onDelete, onEdit, loading, so
   const [saving, setSaving] = useState(false);
 
   if (loading) {
-    return <div className="flex justify-center py-12 text-gray-400">Loading…</div>;
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-black">
+        <Loader2 className="w-10 h-10 animate-spin mb-4" />
+        <p className="font-black uppercase tracking-widest text-sm">Loading Records...</p>
+      </div>
+    );
   }
 
   if (!data.length) {
-    return <div className="flex justify-center py-12 text-gray-400">No records found.</div>;
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-black/40">
+        <p className="font-black uppercase tracking-widest text-sm italic">No records found</p>
+      </div>
+    );
   }
 
   function startEdit(rowId, colKey, currentValue) {
@@ -47,38 +57,40 @@ export default function DataTable({ columns, data, onDelete, onEdit, loading, so
     }
   };
 
-  const getSortIndicator = (colKey) => {
-    if (sortBy !== colKey) return "";
-    return sortOrder === "asc" ? " ↑" : " ↓";
+  const getSortIcon = (colKey) => {
+    if (sortBy !== colKey) return null;
+    return sortOrder === "asc" ? <ArrowUp className="w-3 h-3 ml-1" /> : <ArrowDown className="w-3 h-3 ml-1" />;
   };
 
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-gray-200 text-sm">
-        <thead className="bg-gray-50">
+      <table className="min-w-full text-sm border-collapse">
+        <thead className="bg-black/5 border-b-3 border-black">
           <tr>
             {columns.map((col) => (
               <th
                 key={col.key}
                 onClick={() => handleColumnClick(col.key)}
-                className={`px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider ${
-                  onSort ? "cursor-pointer hover:bg-gray-100" : ""
+                className={`px-6 py-4 text-left text-xs font-black text-black uppercase tracking-wider select-none ${
+                  onSort ? "cursor-pointer hover:bg-black/10" : ""
                 }`}
               >
-                {col.label}
-                {getSortIndicator(col.key)}
+                <div className="flex items-center">
+                  {col.label}
+                  {getSortIcon(col.key)}
+                </div>
               </th>
             ))}
-            {(onDelete) && <th className="px-4 py-3" />}
+            {onDelete && <th className="px-6 py-4" />}
           </tr>
         </thead>
-        <tbody className="bg-white divide-y divide-gray-100">
+        <tbody className="divide-y-2 divide-black/5">
           {data.map((row) => (
-            <tr key={row.id} className="hover:bg-gray-50 transition-colors">
+            <tr key={row.id} className="hover:bg-neo-yellow/5 group">
               {columns.map((col) => {
                 const isEditing = editCell?.rowId === row.id && editCell?.colKey === col.key;
                 return (
-                  <td key={col.key} className="px-4 py-2 text-gray-700 whitespace-nowrap">
+                  <td key={col.key} className="px-6 py-3 text-black whitespace-nowrap">
                     {isEditing ? (
                       <input
                         autoFocus
@@ -86,27 +98,28 @@ export default function DataTable({ columns, data, onDelete, onEdit, loading, so
                         onChange={(e) => setEditValue(e.target.value)}
                         onBlur={commitEdit}
                         onKeyDown={handleKeyDown}
-                        className="w-full px-2 py-1 border border-brand-400 rounded text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white min-w-[120px]"
+                        className="w-full px-2 py-1 border-2 border-black rounded font-bold text-sm focus:outline-none bg-white min-w-[140px]"
                       />
                     ) : (
                       <span
                         onClick={() => startEdit(row.id, col.key, row[col.key])}
-                        className={onEdit ? "cursor-text hover:bg-brand-50 px-1 py-0.5 rounded -mx-1 block" : ""}
+                        className={`font-bold transition-all ${onEdit ? "cursor-text hover:bg-neo-yellow/30 px-2 py-1 rounded-lg border-2 border-transparent hover:border-black/5 block -mx-2" : ""}`}
                         title={onEdit ? "Click to edit" : undefined}
                       >
-                        {row[col.key] ?? <span className="text-gray-300">—</span>}
+                        {row[col.key] ?? <span className="text-black/20 italic">empty</span>}
                       </span>
                     )}
                   </td>
                 );
               })}
               {onDelete && (
-                <td className="px-4 py-3 text-right">
+                <td className="px-6 py-3 text-right">
                   <button
                     onClick={() => onDelete(row.id)}
-                    className="text-xs text-red-500 hover:text-red-700 font-medium transition-colors"
+                    className="p-2 border-2 border-transparent rounded-lg text-black/30 hover:text-neo-red hover:bg-neo-red/10 hover:border-neo-red transition-all"
+                    title="Delete record"
                   >
-                    Delete
+                    <Trash2 className="w-4 h-4" />
                   </button>
                 </td>
               )}
@@ -117,3 +130,4 @@ export default function DataTable({ columns, data, onDelete, onEdit, loading, so
     </div>
   );
 }
+

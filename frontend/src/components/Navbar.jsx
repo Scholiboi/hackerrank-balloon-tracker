@@ -1,12 +1,22 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { 
+  LayoutDashboard, 
+  UserCheck, 
+  Users, 
+  HelpCircle, 
+  LogOut, 
+  Menu, 
+  X,
+  QrCode
+} from "lucide-react";
 
 const links = [
-  { to: "/admin/dashboard", label: "Dashboard" },
-  { to: "/admin/attendance", label: "Attendance" },
-  { to: "/admin/scanner", label: "Scanner" },
-  { to: "/admin/participants", label: "Participants" },
-  { to: "/admin/questions", label: "Questions" },
+  { to: "/admin/dashboard", label: "Queue", icon: LayoutDashboard },
+  { to: "/admin/attendance", label: "Manual", icon: UserCheck },
+  { to: "/admin/scanner", label: "Scanner", icon: QrCode },
+  { to: "/admin/participants", label: "Participants", icon: Users },
+  { to: "/admin/questions", label: "Questions", icon: HelpCircle },
 ];
 
 export default function Navbar() {
@@ -20,27 +30,28 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+    <nav className="bg-white border-b-4 border-black sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-14">
+        <div className="flex items-center justify-between h-16">
           {/* Brand */}
-          <div className="flex items-center gap-1">
-            <span className="text-brand-600 font-bold text-lg tracking-tight mr-4 whitespace-nowrap">
+          <div className="flex items-center gap-6">
+            <span className="text-black font-black text-xl tracking-tight uppercase italic underline decoration-4 decoration-neo-green">
               Code Uncode
             </span>
 
             {/* Desktop links */}
-            <div className="hidden md:flex items-center gap-0.5">
-              {links.map(({ to, label }) => (
+            <div className="hidden md:flex items-center gap-2">
+              {links.map(({ to, label, icon: Icon }) => (
                 <Link
                   key={to}
                   to={to}
-                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
+                  className={`flex items-center gap-2 px-4 py-2 border-3 border-transparent rounded-xl text-sm font-black transition-all ${
                     location.pathname === to
-                      ? "bg-brand-50 text-brand-700"
-                      : "text-gray-600 hover:bg-gray-100"
+                      ? "bg-neo-yellow border-black shadow-neo"
+                      : "text-black/70 hover:bg-black/5 hover:text-black"
                   }`}
                 >
+                  <Icon className="w-4 h-4" />
                   {label}
                 </Link>
               ))}
@@ -50,55 +61,73 @@ export default function Navbar() {
           {/* Desktop logout */}
           <button
             onClick={logout}
-            className="hidden md:block text-sm text-gray-500 hover:text-red-600 transition-colors px-3 py-1.5 rounded-md hover:bg-red-50"
+            className="hidden md:flex items-center gap-2 text-sm font-black text-black px-4 py-2 border-3 border-black rounded-xl bg-neo-pink shadow-neo hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all"
           >
+            <LogOut className="w-4 h-4" />
             Logout
           </button>
 
           {/* Mobile hamburger */}
           <button
             onClick={() => setMenuOpen((v) => !v)}
-            className="md:hidden p-2 rounded-md text-gray-500 hover:bg-gray-100 transition-colors"
+            className="md:hidden p-2 border-3 border-black rounded-xl bg-white shadow-neo"
             aria-label="Toggle menu"
           >
             {menuOpen ? (
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              <X className="w-6 h-6" />
             ) : (
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
+              <Menu className="w-6 h-6" />
             )}
           </button>
         </div>
       </div>
 
-      {/* Mobile menu */}
+      {/* Mobile menu - Modal Overlay */}
       {menuOpen && (
-        <div className="md:hidden border-t border-gray-100 bg-white px-4 py-3 space-y-1">
-          {links.map(({ to, label }) => (
-            <Link
-              key={to}
-              to={to}
-              onClick={() => setMenuOpen(false)}
-              className={`block px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                location.pathname === to
-                  ? "bg-brand-50 text-brand-700"
-                  : "text-gray-600 hover:bg-gray-100"
-              }`}
+        <>
+          {/* Backdrop for click-to-close */}
+          <div 
+            className="fixed inset-0 bg-black/40 z-40 md:hidden backdrop-blur-[2px]" 
+            onClick={() => setMenuOpen(false)}
+          />
+          
+          <div className="fixed top-[72px] right-4 left-4 z-50 md:hidden neo-card bg-neo-green p-4 flex flex-col gap-2 max-w-sm mx-auto animate-in fade-in zoom-in duration-200 origin-top">
+            <div className="flex items-center justify-between mb-2 px-1">
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-black/40">Navigation</span>
+              <button onClick={() => setMenuOpen(false)}>
+                <X className="w-4 h-4 text-black" />
+              </button>
+            </div>
+
+            {links.map(({ to, label, icon: Icon }) => (
+              <Link
+                key={to}
+                to={to}
+                onClick={() => setMenuOpen(false)}
+                className={`flex items-center gap-3 px-4 py-3 border-3 border-black rounded-xl text-sm font-black italic transition-all ${
+                  location.pathname === to
+                    ? "bg-white shadow-neo-sm translate-x-1 translate-y-1"
+                    : "bg-white/60 active:translate-x-0.5 active:translate-y-0.5"
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                {label}
+              </Link>
+            ))}
+            
+            <div className="h-px bg-black/10 my-1" />
+
+            <button
+              onClick={logout}
+              className="flex items-center gap-3 w-full text-left px-4 py-3 border-3 border-black rounded-xl text-sm font-black italic bg-neo-red shadow-neo-sm active:shadow-none active:translate-x-1 active:translate-y-1 transition-all"
             >
-              {label}
-            </Link>
-          ))}
-          <button
-            onClick={logout}
-            className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-red-500 hover:bg-red-50 transition-colors"
-          >
-            Logout
-          </button>
-        </div>
+              <LogOut className="w-4 h-4" />
+              Logout
+            </button>
+          </div>
+        </>
       )}
     </nav>
   );
 }
+

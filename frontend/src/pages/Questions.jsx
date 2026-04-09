@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import DataTable from "../components/DataTable";
 import Navbar from "../components/Navbar";
+import { FileDown, Plus, X, Search, HelpCircle } from "lucide-react";
 import {
   createQuestion,
   deleteQuestion,
@@ -104,30 +105,35 @@ export default function Questions() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <Navbar />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-5 sm:py-6">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
-          <h2 className="text-xl font-bold text-gray-900">
-            Questions
-            <span className="ml-2 text-sm font-normal text-gray-400">({data.length})</span>
-          </h2>
-          <div className="flex items-center gap-2 flex-wrap">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between mb-8">
+          <div>
+            <h2 className="text-3xl font-black text-black tracking-tight uppercase">
+              Question Map
+            </h2>
+            <p className="font-bold text-black/40 text-sm mt-1 uppercase tracking-widest italic decoration-neo-pink decoration-2 underline">
+              {data.length} total challenges
+            </p>
+          </div>
+          <div className="flex items-center gap-3 flex-wrap">
             {uploadStatus && (
-              <span className="text-sm text-green-600 font-medium">{uploadStatus}</span>
+              <span className="neo-badge bg-neo-green py-2 px-4 shadow-none border-dashed">{uploadStatus}</span>
             )}
             <input ref={fileRef} type="file" accept=".xlsx,.xls" className="hidden" onChange={handleUpload} />
             <button
               onClick={() => fileRef.current.click()}
-              className="px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+              className="neo-btn bg-white hover:bg-neo-blue transition-colors group"
             >
-              Upload Excel
+              <FileDown className="w-4 h-4 group-hover:rotate-12 transition-transform" />
+              Import Excel
             </button>
             <button
               onClick={() => { setShowForm((v) => !v); setFormError(""); }}
-              className="px-3 py-2 text-sm bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors"
+              className={`neo-btn text-black transition-all ${showForm ? "bg-neo-pink" : "bg-neo-green"}`}
             >
-              {showForm ? "Cancel" : "+ Add Question"}
+              {showForm ? <><X className="w-4 h-4" /> Cancel</> : <><HelpCircle className="w-4 h-4" /> New Task</>}
             </button>
           </div>
         </div>
@@ -136,41 +142,49 @@ export default function Questions() {
         {showForm && (
           <form
             onSubmit={handleAddSubmit}
-            className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 sm:p-5 mb-4 grid grid-cols-1 sm:grid-cols-2 gap-3"
+            className="neo-card p-6 mb-8 bg-white max-w-2xl mx-auto"
           >
-            {COLUMNS.map((col) => (
-              <div key={col.key}>
-                <label className="text-xs text-gray-500 font-medium block mb-1">{col.label}</label>
-                <input
-                  value={form[col.key]}
-                  onChange={(e) => setForm((f) => ({ ...f, [col.key]: e.target.value }))}
-                  required={col.key === "challenge_name"}
-                  className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
-                />
-              </div>
-            ))}
+            <p className="text-xs font-black text-black/40 uppercase mb-4 tracking-widest">Register New Challenge</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {COLUMNS.map((col) => (
+                <div key={col.key}>
+                  <label className="text-[10px] text-black font-black uppercase block mb-1.5 ml-1">{col.label}</label>
+                  <input
+                    value={form[col.key]}
+                    onChange={(e) => setForm((f) => ({ ...f, [col.key]: e.target.value }))}
+                    required={col.key === "challenge_name"}
+                    className="w-full px-3 py-2.5 rounded-xl border-3 border-black text-sm font-bold bg-white outline-none focus:shadow-neo transition-all"
+                  />
+                </div>
+              ))}
+            </div>
             {formError && (
-              <p className="col-span-full text-sm text-red-500">{formError}</p>
+              <div className="mt-6 neo-badge bg-neo-red w-full justify-center shadow-none border-dashed border-2">
+                {formError}
+              </div>
             )}
-            <div className="col-span-full flex justify-end gap-2">
-              <button type="submit" className="px-4 py-2 bg-brand-600 text-white text-sm rounded-lg hover:bg-brand-700 transition-colors">
-                Save
+            <div className="mt-6 flex justify-end">
+              <button type="submit" className="neo-btn bg-black text-white px-10 py-3 uppercase tracking-widest text-xs">
+                Link Balloon
               </button>
             </div>
           </form>
         )}
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-100 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <span className="text-sm text-gray-500 font-medium">
-              {sorted.length} of {data.length} shown
+        <div className="neo-card bg-white overflow-hidden max-w-3xl mx-auto">
+          <div className="px-6 py-4 border-b-3 border-black bg-neo-yellow/20 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <span className="text-xs font-black uppercase italic decoration-neo-green decoration-2 underline">
+              {sorted.length} active maps
             </span>
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by name or colour…"
-              className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 w-full sm:w-64"
-            />
+            <div className="relative w-full sm:w-64">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-black" />
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search tags..."
+                className="w-full pl-10 pr-4 py-2 border-3 border-black rounded-xl font-bold bg-white outline-none focus:shadow-neo transition-all text-sm"
+              />
+            </div>
           </div>
           <DataTable columns={COLUMNS} data={sorted} onDelete={handleDelete} onEdit={handleEdit} loading={loading} sortBy={sortBy} sortOrder={sortOrder} onSort={handleSort} />
         </div>
@@ -178,3 +192,4 @@ export default function Questions() {
     </div>
   );
 }
+
