@@ -1,8 +1,5 @@
 # Python
 backend/.venv
-backend/__pycache__
-backend/routers/__pycache__
-backend/data/
 **/__pycache__
 
 # Node
@@ -12,5 +9,8 @@ frontend/dist/
 # Environment (never commit real credentials)
 .env
 
-# Legacy (no longer used)
+# Backend data directory (SQLite database)
+backend/data/
+
+# Upload files
 /backend/files/*

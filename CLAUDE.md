@@ -13,35 +13,55 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Running the Project
 
-### Docker (recommended)
-
-```bash
-cp .env.example .env      # fill in ADMIN_PASSWORD, JWT_SECRET; optionally HackerRank config
-docker compose up --build
-```
-
-- App: `http://localhost` (only public entry point — backend is not exposed)
-- API docs are disabled in production
-
-### Local Development
+### Local Development (standard workflow)
 
 **Backend** (Python 3.12+):
 ```bash
 cd backend
-python -m venv .venv && source .venv/bin/activate
+python -m venv .venv
+
+# Windows
+.venv\Scripts\activate
+# macOS / Linux
+source .venv/bin/activate
+
 pip install -r requirements.txt
-# Create .env with at minimum: ADMIN_PASSWORD=something
 uvicorn main:app --reload --env-file .env
 ```
 
-**Frontend** (Node 20+):
+**Frontend** (Node 20+, separate terminal):
 ```bash
 cd frontend
 npm install
 npm run dev               # http://localhost:5173, proxies /api → localhost:8000
 ```
 
+`backend/.env` already exists and is configured for local dev. The SQLite database is created automatically at `backend/data/contest.db` on first run.
+
 The HackerRank poller runs automatically inside the backend process. If `HACKERRANK_CONTEST_NAME` is not set, it skips polling silently — the rest of the app works normally.
+
+### Production (server)
+
+The server has no source code. It only pulls pre-built Docker images from Docker Hub:
+
+```bash
+cd /opt/codestars          # or wherever docker-compose.yml + .env live
+docker compose pull
+docker compose up -d
+```
+
+CI/CD handles this automatically on every push to `master`.
+
+---
+
+## CI/CD
+
+`.github/workflows/docker-publish.yml` runs on every push to `master`:
+1. Builds `backend` and `frontend` Docker images
+2. Pushes to Docker Hub as `:latest` and `:<git-sha>`
+3. SSHes into the production server and runs `docker compose pull && docker compose up -d`
+
+Required GitHub secrets: `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`, `SERVER_HOST`, `SERVER_USER`, `SERVER_SSH_KEY`, `SERVER_DEPLOY_PATH`.
 
 ---
 
@@ -55,7 +75,7 @@ HackerRank API ──► asyncio background task (inside FastAPI, every POLL_INT
                   FastAPI backend (SQLite via SQLAlchemy)  ← internal only, no public port
                         │  JSON API (/api/*)
                         ▼
-               nginx (port 80 — only public entry point)
+               nginx (port 80 — only public entry point, production only)
                         │  serves React SPA + proxies /api → backend
                         ▼
                   React + Vite SPA
@@ -113,15 +133,15 @@ Column names are normalised (stripped, lowercased, spaces → underscores). **Up
 
 ## Environment Variables
 
-See `.env.example`. Critical ones:
-
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `ADMIN_PASSWORD` | Yes | Admin panel password |
-| `JWT_SECRET` | Yes (prod) | Signs JWTs; random fallback in dev (tokens invalidated on restart) |
-| `HACKERRANK_CONTEST_NAME` | Optional | Contest slug — leave blank to disable polling |
-| `HACKERRANK_COOKIES` | Optional | JSON object of HR auth cookies |
-| `POLL_INTERVAL` | Optional | Seconds between polls (default 10) |
+| Variable | Where | Description |
+|----------|-------|-------------|
+| `ADMIN_PASSWORD` | `backend/.env` | Admin panel password |
+| `JWT_SECRET` | `backend/.env` | Signs JWTs — generate with `python -c "import secrets; print(secrets.token_hex(32))"` |
+| `FRONTEND_ORIGIN` | `backend/.env` | `http://localhost:5173` locally; public domain in production |
+| `DATABASE_URL` | `backend/.env` | SQLite path — `sqlite:///./data/contest.db` (no change needed) |
+| `HACKERRANK_CONTEST_NAME` | `backend/.env` | Contest slug — leave blank to disable polling |
+| `HACKERRANK_COOKIES` | `backend/.env` | JSON object of HR auth cookies |
+| `DOCKERHUB_USERNAME` | `.env` (server only) | Docker Hub username — used by docker-compose to resolve image names |
 
 ---
 
@@ -129,6 +149,7 @@ See `.env.example`. Critical ones:
 
 - **Poller is inside the backend**: runs as an `asyncio.create_task` in the lifespan. No separate service needed. Polling is skipped silently if `HACKERRANK_CONTEST_NAME` is not set.
 - **Backend not publicly accessible**: only `expose: 8000` in Docker (not `ports`). All traffic goes through nginx on port 80. FastAPI docs are disabled (`docs_url=None`, `redoc_url=None`, `openapi_url=None`).
+- **No source code on server**: production server only holds `docker-compose.yml` and `.env`. Images are built by CI and pulled from Docker Hub.
 - **Attendance is idempotent**: checking in the same participant twice returns the existing record without error.
 - **SQLite + WAL mode**: single-file database, concurrent read/write supported. Volume-mounted in Docker for persistence.
 - **Excel upload = replace-all**: safer than upsert. Balloon and attendance state are in separate tables, unaffected by participant/question uploads.
