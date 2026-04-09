@@ -67,6 +67,7 @@ jobs:
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
+          port: 2223
           key: ${{ secrets.SERVER_SSH_KEY }}
           source: docker-compose.yml
           target: ${{ secrets.SERVER_DEPLOY_PATH }}
@@ -76,6 +77,7 @@ jobs:
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
+          port: 2223
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             cd ${{ secrets.SERVER_DEPLOY_PATH }}
