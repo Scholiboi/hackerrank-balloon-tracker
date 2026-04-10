@@ -1,5 +1,5 @@
-from datetime import datetime
-from pydantic import BaseModel, ConfigDict
+from datetime import datetime, timezone
+from pydantic import BaseModel, ConfigDict, field_serializer
 from typing import Optional
 
 
@@ -81,6 +81,15 @@ class AttendanceRead(BaseModel):
     name: Optional[str] = None
     lab: Optional[str] = None
     seat: Optional[str] = None
+
+    @field_serializer("college_check_in_at", "lab_check_in_at")
+    def _serialize_dt(self, dt: Optional[datetime]) -> Optional[str]:
+        """Always emit datetimes with explicit UTC offset so the browser parses them correctly."""
+        if dt is None:
+            return None
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return dt.isoformat()
 
 
 class AttendanceStats(BaseModel):

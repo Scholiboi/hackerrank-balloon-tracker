@@ -108,7 +108,7 @@ export default function Dashboard() {
             <div className="flex flex-col items-end">
               {lastUpdated && (
                 <p className="text-[10px] font-black text-black/40 uppercase tracking-widest mb-1 flex items-center gap-1">
-                  <Clock className="w-3 h-3" /> Updated {lastUpdated.toLocaleTimeString()}
+                  <Clock className="w-3 h-3" /> Updated {lastUpdated.toLocaleTimeString("en-GB", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit", hour12: false })}
                 </p>
               )}
               <div className="flex items-center gap-3">
