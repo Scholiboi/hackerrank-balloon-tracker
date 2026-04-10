@@ -224,36 +224,36 @@ export default function Attendance() {
             </div>
           </div>
           <div className="overflow-x-auto">
-            <table className="min-w-full text-sm">
+            <table className="min-w-full text-xs">
               <thead className="bg-black/5 border-b-2 border-black">
                 <tr>
-                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-left font-black uppercase tracking-wider text-xs">ID</th>
-                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-left font-black uppercase tracking-wider text-xs">Name</th>
-                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-left font-black uppercase tracking-wider text-xs">Lab</th>
-                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-left font-black uppercase tracking-wider text-xs">College Log</th>
-                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-left font-black uppercase tracking-wider text-xs">Lab Log</th>
-                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-center font-black uppercase tracking-wider text-xs">Action</th>
+                  <th className="px-3 py-2.5 text-left font-black uppercase tracking-wider text-[10px] whitespace-nowrap">ID</th>
+                  <th className="px-3 py-2.5 text-left font-black uppercase tracking-wider text-[10px] whitespace-nowrap">Name</th>
+                  <th className="px-3 py-2.5 text-left font-black uppercase tracking-wider text-[10px] whitespace-nowrap hidden sm:table-cell">Lab</th>
+                  <th className="px-3 py-2.5 text-left font-black uppercase tracking-wider text-[10px] whitespace-nowrap">College Log</th>
+                  <th className="px-3 py-2.5 text-left font-black uppercase tracking-wider text-[10px] whitespace-nowrap">Lab Log</th>
+                  <th className="px-3 py-2.5 text-center font-black uppercase tracking-wider text-[10px] whitespace-nowrap"></th>
                 </tr>
               </thead>
-              <tbody className="divide-y-2 divide-black/5">
+              <tbody className="divide-y divide-black/5">
                 {filtered.map((r) => (
                   <tr key={r.id} className="hover:bg-neo-yellow/5">
-                    <td className="px-3 sm:px-6 py-3 sm:py-4 font-black font-mono text-xs">{r.hackerrank_id}</td>
-                    <td className="px-3 sm:px-6 py-3 sm:py-4 font-bold text-sm">{r.name || <span className="text-black/20 italic text-xs">—</span>}</td>
-                    <td className="px-3 sm:px-6 py-3 sm:py-4 font-bold text-sm">{r.lab || <span className="text-black/20 italic text-xs">—</span>}</td>
-                    <td className="px-3 sm:px-6 py-3 sm:py-4">
-                      <EditableCell value={r.college_check_in_at} type="datetime-local" onSave={(v) => handleEdit(r.id, "college_check_in_at", v)} className="font-mono text-[11px]" />
+                    <td className="px-3 py-2 font-black font-mono text-xs whitespace-nowrap">{r.hackerrank_id}</td>
+                    <td className="px-3 py-2 font-bold text-xs max-w-[120px] truncate" title={r.name}>{r.name || <span className="text-black/20 italic">—</span>}</td>
+                    <td className="px-3 py-2 font-bold text-xs hidden sm:table-cell whitespace-nowrap">{r.lab || <span className="text-black/20 italic">—</span>}</td>
+                    <td className="px-3 py-2">
+                      <EditableCell value={r.college_check_in_at} type="datetime-local" onSave={(v) => handleEdit(r.id, "college_check_in_at", v)} className="font-mono text-[10px]" />
                     </td>
-                    <td className="px-3 sm:px-6 py-3 sm:py-4">
-                      <EditableCell value={r.lab_check_in_at} type="datetime-local" onSave={(v) => handleEdit(r.id, "lab_check_in_at", v)} className="font-mono text-[11px]" />
+                    <td className="px-3 py-2">
+                      <EditableCell value={r.lab_check_in_at} type="datetime-local" onSave={(v) => handleEdit(r.id, "lab_check_in_at", v)} className="font-mono text-[10px]" />
                     </td>
-                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-center">
+                    <td className="px-3 py-2 text-center">
                       <button
                         onClick={() => handleUndo(r.id)}
-                        className="p-2 border-2 border-black rounded-lg hover:bg-neo-red transition-colors"
+                        className="p-1.5 border-2 border-black rounded-lg hover:bg-neo-red transition-colors"
                         title="Delete attendance record"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </td>
                   </tr>

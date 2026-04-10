@@ -177,17 +177,17 @@ export default function WifiManager() {
             </div>
 
             <div className="overflow-x-auto">
-              <table className="min-w-full text-sm">
+              <table className="min-w-full text-xs">
                 <thead className="bg-black/5 border-b-2 border-black">
                   <tr>
-                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-left font-black uppercase tracking-wider text-xs">Login ID</th>
-                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-left font-black uppercase tracking-wider text-xs">Password</th>
-                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-left font-black uppercase tracking-wider text-xs hidden sm:table-cell">Assigned To</th>
-                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-left font-black uppercase tracking-wider text-xs">Participant</th>
-                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-left font-black uppercase tracking-wider text-xs">Status</th>
+                    <th className="px-3 py-2.5 text-left font-black uppercase tracking-wider text-[10px] whitespace-nowrap">Login ID</th>
+                    <th className="px-3 py-2.5 text-left font-black uppercase tracking-wider text-[10px] whitespace-nowrap">Password</th>
+                    <th className="px-3 py-2.5 text-left font-black uppercase tracking-wider text-[10px] whitespace-nowrap hidden sm:table-cell">Assigned To</th>
+                    <th className="px-3 py-2.5 text-left font-black uppercase tracking-wider text-[10px] whitespace-nowrap">Participant</th>
+                    <th className="px-3 py-2.5 text-left font-black uppercase tracking-wider text-[10px] whitespace-nowrap">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y-2 divide-black/5">
+                <tbody className="divide-y divide-black/5">
                   {filtered.map((c) => (
                     <tr
                       key={c.id}
@@ -195,21 +195,21 @@ export default function WifiManager() {
                         !c.hackerrank_id ? "bg-neo-yellow/20 hover:bg-neo-yellow/30" : "hover:bg-black/5"
                       }`}
                     >
-                      <td className="px-3 sm:px-6 py-3 sm:py-4 font-black font-mono text-xs sm:text-sm">{c.login_id}</td>
-                      <td className="px-3 sm:px-6 py-3 sm:py-4 font-mono text-xs sm:text-sm font-bold">{c.password}</td>
-                      <td className="px-3 sm:px-6 py-3 sm:py-4 font-mono text-xs font-bold text-black/60 hidden sm:table-cell">
+                      <td className="px-3 py-2 font-black font-mono text-xs whitespace-nowrap">{c.login_id}</td>
+                      <td className="px-3 py-2 font-mono text-xs font-bold whitespace-nowrap">{c.password}</td>
+                      <td className="px-3 py-2 font-mono text-xs font-bold text-black/60 hidden sm:table-cell whitespace-nowrap">
                         {c.hackerrank_id || <span className="text-black/30 italic">—</span>}
                       </td>
-                      <td className="px-3 sm:px-6 py-3 sm:py-4 font-bold text-sm">
+                      <td className="px-3 py-2 font-bold text-xs max-w-[120px] truncate" title={c.participant_name}>
                         {c.participant_name || <span className="text-black/30 italic">—</span>}
                       </td>
-                      <td className="px-3 sm:px-6 py-3 sm:py-4">
+                      <td className="px-3 py-2 whitespace-nowrap">
                         {c.hackerrank_id ? (
-                          <span className="neo-badge bg-neo-green py-1 shadow-none text-[11px]">
+                          <span className="neo-badge bg-neo-green py-0.5 shadow-none text-[10px]">
                             <Wifi className="w-3 h-3 mr-1" /> Assigned
                           </span>
                         ) : (
-                          <span className="neo-badge bg-neo-yellow py-1 shadow-none text-[11px] border-dashed">
+                          <span className="neo-badge bg-neo-yellow py-0.5 shadow-none text-[10px] border-dashed">
                             <AlertTriangle className="w-3 h-3 mr-1" /> Unassigned
                           </span>
                         )}

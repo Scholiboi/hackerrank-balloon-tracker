@@ -16,7 +16,7 @@ function BalloonBadge({ colour }) {
   const lower = (colour || "").toLowerCase();
   const cls = COLOUR_MAP[lower] || "bg-white text-black";
   return (
-    <span className={`neo-badge lowercase py-1 px-3 ${cls}`}>
+    <span className={`neo-badge lowercase py-0.5 px-2 text-[11px] ${cls}`}>
       {colour || "—"}
     </span>
   );
@@ -31,40 +31,39 @@ export default function BalloonRow({ submission, onTick, ticking }) {
     .padStart(2, "0");
 
   return (
-    <tr className="hover:bg-neo-yellow/5 transition-colors border-b-2 border-black/5">
-      <td className="px-3 sm:px-6 py-3 sm:py-4 font-black font-mono text-xs text-black/60 whitespace-nowrap">
+    <tr className="hover:bg-neo-yellow/5 transition-colors border-b border-black/5">
+      <td className="px-3 py-2 font-black font-mono text-xs text-black/60 whitespace-nowrap">
         {mins}:{secs}
       </td>
-      <td className="px-3 sm:px-6 py-3 sm:py-4 font-black font-mono text-xs text-black whitespace-nowrap">
-        <span className="bg-neo-blue/20 px-2 py-1 rounded border-2 border-black/10">
+      <td className="px-3 py-2 font-black font-mono text-xs text-black whitespace-nowrap">
+        <span className="bg-neo-blue/20 px-1.5 py-0.5 rounded border border-black/10">
           {submission.hackerrank_id}
         </span>
       </td>
-      <td className="px-3 sm:px-6 py-3 sm:py-4 font-black text-black whitespace-nowrap text-sm sm:text-base">
+      <td className="px-3 py-2 font-black text-black text-xs whitespace-nowrap max-w-[120px] truncate">
         {submission.name}
       </td>
-      <td className="px-3 sm:px-6 py-3 sm:py-4 font-bold text-black/80 whitespace-nowrap uppercase text-xs sm:text-sm">
+      <td className="px-3 py-2 font-bold text-black/80 whitespace-nowrap uppercase text-xs">
         {submission.lab}
       </td>
-      <td className="px-3 sm:px-6 py-3 sm:py-4 font-bold text-black/80 whitespace-nowrap uppercase text-xs sm:text-sm">
+      <td className="px-3 py-2 font-bold text-black/80 whitespace-nowrap uppercase text-xs hidden sm:table-cell">
         {submission.seat || "—"}
       </td>
-      <td className="px-3 sm:px-6 py-3 sm:py-4 font-bold text-black/70 max-w-[140px] sm:max-w-xs truncate italic text-xs sm:text-sm">
+      <td className="px-3 py-2 font-bold text-black/70 max-w-[160px] truncate italic text-xs">
         {submission.challenge}
       </td>
-      <td className="px-3 sm:px-6 py-3 sm:py-4">
+      <td className="px-3 py-2">
         <BalloonBadge colour={submission.balloon_colour} />
       </td>
-      <td className="px-3 sm:px-6 py-3 sm:py-4 text-right">
+      <td className="px-3 py-2 text-right whitespace-nowrap">
         <button
           disabled={ticking}
           onClick={() => onTick(submission.submission_id)}
-          className="neo-btn bg-neo-green py-2 px-4 shadow-neo text-xs uppercase tracking-wider"
+          className="neo-btn bg-neo-green py-1.5 px-3 shadow-neo-sm text-xs uppercase tracking-wide"
         >
-          {ticking ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Check className="w-4 h-4" /> Delivered</>}
+          {ticking ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <><Check className="w-3.5 h-3.5" /> Done</>}
         </button>
       </td>
     </tr>
   );
 }
-

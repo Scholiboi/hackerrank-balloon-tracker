@@ -145,22 +145,29 @@ export default function Dashboard() {
               </div>
             ) : (
               <div className="overflow-x-auto">
-                <table className="min-w-full text-sm border-collapse">
+                <table className="min-w-full text-xs border-collapse">
                   <thead className="bg-neo-yellow/30 border-b-3 border-black">
                     <tr>
-                      {["Time", "HR Username", "Name", "Lab", "Seat", "Challenge", "Balloon", ""].map(
-                        (h) => (
-                          <th
-                            key={h}
-                            className="px-6 py-5 text-left text-[10px] font-black text-black uppercase tracking-widest whitespace-nowrap"
-                          >
-                            {h}
-                          </th>
-                        )
-                      )}
+                      {[
+                        { label: "Time", cls: "" },
+                        { label: "HR Username", cls: "" },
+                        { label: "Name", cls: "" },
+                        { label: "Lab", cls: "" },
+                        { label: "Seat", cls: "hidden sm:table-cell" },
+                        { label: "Challenge", cls: "" },
+                        { label: "Balloon", cls: "" },
+                        { label: "", cls: "" },
+                      ].map((h) => (
+                        <th
+                          key={h.label}
+                          className={`px-3 py-2.5 text-left text-[10px] font-black text-black uppercase tracking-wider whitespace-nowrap ${h.cls}`}
+                        >
+                          {h.label}
+                        </th>
+                      ))}
                     </tr>
                   </thead>
-                  <tbody className="divide-y-3 divide-black/5">
+                  <tbody className="divide-y divide-black/5">
                     {filtered.map((s) => (
                       <BalloonRow
                         key={s.submission_id}

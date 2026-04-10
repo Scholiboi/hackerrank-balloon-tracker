@@ -98,39 +98,39 @@ export default function EmailManager() {
                     </div>
 
                     <div className="overflow-x-auto">
-                        <table className="min-w-full text-sm">
-                            <thead className="bg-black/5 border-b-2 border-black font-black uppercase tracking-wider text-xs">
+                        <table className="min-w-full text-xs">
+                            <thead className="bg-black/5 border-b-2 border-black font-black uppercase tracking-wider">
                                 <tr>
-                                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-left">Trainer</th>
-                                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-left hidden sm:table-cell">Lab / Seat</th>
-                                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-left">Email</th>
-                                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-center">Send</th>
+                                    <th className="px-3 py-2.5 text-left text-[10px] whitespace-nowrap">Trainer</th>
+                                    <th className="px-3 py-2.5 text-left text-[10px] whitespace-nowrap hidden sm:table-cell">Lab / Seat</th>
+                                    <th className="px-3 py-2.5 text-left text-[10px] whitespace-nowrap">Email</th>
+                                    <th className="px-3 py-2.5 text-center text-[10px] w-12">Send</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y-2 divide-black/5">
+                            <tbody className="divide-y divide-black/5">
                                 {filtered.map((p) => (
                                     <tr key={p.id} className="hover:bg-neo-blue/5">
-                                        <td className="px-3 sm:px-6 py-3 sm:py-4">
-                                            <div className="font-black text-sm sm:text-base">{p.name}</div>
-                                            <div className="font-mono text-xs opacity-60">@{p.hackerrank_id}</div>
+                                        <td className="px-3 py-2">
+                                            <div className="font-black text-xs max-w-[140px] truncate" title={p.name}>{p.name}</div>
+                                            <div className="font-mono text-[10px] opacity-60">@{p.hackerrank_id}</div>
                                         </td>
-                                        <td className="px-3 sm:px-6 py-3 sm:py-4 hidden sm:table-cell">
-                                            <div className="font-bold uppercase text-xs">
-                                                <span className="bg-neo-green px-1.5 py-0.5 rounded border-2 border-black mr-2">{p.lab}</span>
-                                                <span className="bg-neo-pink px-1.5 py-0.5 rounded border-2 border-black">{p.seat}</span>
+                                        <td className="px-3 py-2 hidden sm:table-cell whitespace-nowrap">
+                                            <div className="font-bold uppercase text-[10px] flex gap-1 flex-wrap">
+                                                <span className="bg-neo-green px-1.5 py-0.5 rounded border border-black">{p.lab}</span>
+                                                <span className="bg-neo-pink px-1.5 py-0.5 rounded border border-black">{p.seat}</span>
                                             </div>
                                         </td>
-                                        <td className="px-3 sm:px-6 py-3 sm:py-4">
-                                            <span className="text-[11px] font-mono break-all">{p.email || <span className="text-neo-red italic font-black text-xs">NO EMAIL</span>}</span>
+                                        <td className="px-3 py-2 max-w-[180px]">
+                                            <span className="text-[10px] font-mono break-all">{p.email || <span className="text-neo-red italic font-black">NO EMAIL</span>}</span>
                                         </td>
-                                        <td className="px-3 sm:px-6 py-3 sm:py-4 text-center">
+                                        <td className="px-3 py-2 text-center">
                                             <button
                                                 onClick={() => handleSendSingle(p.hackerrank_id)}
                                                 disabled={!p.email}
-                                                className="p-3 border-2 border-black rounded-xl bg-neo-yellow hover:bg-black hover:text-white transition-all active:translate-x-0.5 active:translate-y-0.5 disabled:opacity-30 disabled:grayscale"
+                                                className="p-2 border-2 border-black rounded-lg bg-neo-yellow hover:bg-black hover:text-white transition-all active:translate-x-0.5 active:translate-y-0.5 disabled:opacity-30 disabled:grayscale"
                                                 title="Send Entry Pass"
                                             >
-                                                <Send className="w-4 h-4" />
+                                                <Send className="w-3.5 h-3.5" />
                                             </button>
                                         </td>
                                     </tr>
