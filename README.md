@@ -136,9 +136,47 @@ HackerRank API ──► asyncio background task (inside FastAPI, every POLL_INT
 
 | Path | Description |
 |------|-------------|
-| `/` | Participant portal (public) |
+| `/` | Participant portal (public) — seat, check-in status, wifi credentials |
 | `/admin/login` | Admin login |
 | `/admin/dashboard` | Balloon queue (JWT-protected) |
-| `/admin/attendance` | Attendance (JWT-protected) |
+| `/admin/attendance` | Attendance — College & Lab check-in (JWT-protected) |
+| `/admin/scanner` | QR code scanner (JWT-protected) |
 | `/admin/participants` | Participant management (JWT-protected) |
 | `/admin/questions` | Question management (JWT-protected) |
+| `/admin/emails` | Email dispatch (JWT-protected) |
+| `/admin/wifi` | Guest wifi credential management (JWT-protected) |
+
+---
+
+## Excel Upload Formats
+
+All uploads are **replace-all** — existing rows in that table are deleted before inserting. Column names are case-insensitive and spaces are converted to underscores automatically.
+
+### Participants — `/admin/participants` → Import Excel
+
+| Column | Required | Notes |
+|--------|----------|-------|
+| `hackerrank_id` | Yes | Unique HackerRank username |
+| `name` | Yes | Full display name |
+| `email` | No | Used for email dispatch |
+| `mobile` | No | Contact number |
+| `lab` | No | e.g. `Lab 1`, `Lab 2`, `Lab 3`, `Lab 4` |
+| `seat` | No | e.g. `A-01` |
+
+Accepted aliases: `hacker_rank_id` → `hackerrank_id`, `assigned_lab` → `lab`, `seat_no` → `seat`, `mobile_number` → `mobile`
+
+### Questions — `/admin/questions` → Import Excel
+
+| Column | Required | Notes |
+|--------|----------|-------|
+| `challenge_name` | Yes | Exact HackerRank challenge name |
+| `balloon_colour` | No | Display label for balloon queue |
+
+### Wifi Credentials — `/admin/wifi` → Import Excel
+
+| Column | Required | Notes |
+|--------|----------|-------|
+| `login_id` | Yes | Unique guest wifi username |
+| `password` | Yes | Wifi password |
+
+After upload, credentials are **randomly assigned** to participants automatically. Surplus credentials (more credentials than participants) remain unassigned and are highlighted in the Wifi admin page. Use the **Re-assign** button to re-randomize at any time.

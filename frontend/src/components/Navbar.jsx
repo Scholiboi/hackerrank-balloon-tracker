@@ -9,7 +9,8 @@ import {
   Menu,
   X,
   QrCode,
-  Mail
+  Mail,
+  Wifi
 } from "lucide-react";
 
 const links = [
@@ -19,6 +20,7 @@ const links = [
   { to: "/admin/participants", label: "Participants", icon: Users },
   { to: "/admin/questions", label: "Questions", icon: HelpCircle },
   { to: "/admin/emails", label: "Emails", icon: Mail },
+  { to: "/admin/wifi", label: "Wifi", icon: Wifi },
 ];
 
 export default function Navbar() {

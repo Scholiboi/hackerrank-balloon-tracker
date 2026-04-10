@@ -48,3 +48,12 @@ class Attendance(Base):
     hackerrank_id = Column(String, unique=True, nullable=False, index=True)
     college_check_in_at = Column(DateTime, nullable=True)
     lab_check_in_at = Column(DateTime, nullable=True)
+
+
+class WifiCredential(Base):
+    __tablename__ = "wifi_credentials"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    login_id = Column(String, unique=True, nullable=False, index=True)
+    password = Column(String, nullable=False)
+    hackerrank_id = Column(String, nullable=True, unique=True, index=True)

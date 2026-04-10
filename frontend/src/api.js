@@ -66,3 +66,11 @@ export const undoCheckIn = (id) => api.delete(`/attendance/${id}`);
 // Mailer
 export const sendEmail = (hackerrank_id) => api.post(`/mailer/send/${hackerrank_id}`).then((r) => r.data);
 export const sendAllEmails = () => api.post("/mailer/send-all").then((r) => r.data);
+
+// Wifi
+export const getWifi = () => api.get("/wifi").then((r) => r.data);
+export const uploadWifi = (formData) =>
+  api.post("/wifi/upload", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  }).then((r) => r.data);
+export const reassignWifi = () => api.post("/wifi/reassign").then((r) => r.data);

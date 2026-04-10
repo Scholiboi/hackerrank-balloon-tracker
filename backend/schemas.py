@@ -112,6 +112,17 @@ class AttendanceUpdate(BaseModel):
     lab_check_in_at: Optional[datetime] = None
 
 
+# ── Wifi ─────────────────────────────────────────────────────────────────────
+
+class WifiCredentialRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    login_id: str
+    password: str
+    hackerrank_id: Optional[str] = None
+    participant_name: Optional[str] = None
+
+
 # ── Portal ───────────────────────────────────────────────────────────────────
 
 class PortalResult(BaseModel):
@@ -120,4 +131,7 @@ class PortalResult(BaseModel):
     name: str
     lab: Optional[str]
     seat: Optional[str]
-    checked_in: bool = False
+    college_checked_in: bool = False
+    lab_checked_in: bool = False
+    wifi_login_id: Optional[str] = None
+    wifi_password: Optional[str] = None

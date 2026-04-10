@@ -108,17 +108,19 @@ export default function Attendance() {
       const rec = await checkIn(id, checkInType);
       const timeKey = checkInType === "college" ? "college_check_in_at" : "lab_check_in_at";
       const checkInTime = rec[timeKey] ? new Date(rec[timeKey]).toLocaleTimeString() : "unknown";
-      setCheckInSuccess(`${rec.name || id} checked in at ${checkInTime}`);
+      const label = checkInType === "college" ? "College Check-in" : "Lab Check-in";
+      setCheckInSuccess(`${rec.name || id} — ${label} recorded at ${checkInTime}`);
       setCheckInInput("");
       await load();
     } catch (err) {
-      setCheckInError(err.response?.data?.detail || "Check-in failed.");
+      const label = checkInType === "college" ? "College Check-in" : "Lab Check-in";
+      setCheckInError(err.response?.data?.detail || `${label} failed.`);
     }
     setTimeout(() => { setCheckInSuccess(""); setCheckInError(""); }, 4000);
   }
 
   async function handleUndo(id) {
-    if (!window.confirm("Undo this check-in?")) return;
+    if (!window.confirm("Delete this attendance record? Both College and Lab check-in times will be removed.")) return;
     await undoCheckIn(id);
     setRecords((prev) => prev.filter((r) => r.id !== id));
     setStats((s) => s ? { ...s, checked_in: s.checked_in - 1, not_checked_in: s.not_checked_in + 1 } : s);
@@ -153,7 +155,7 @@ export default function Attendance() {
         <div className="neo-card p-6 mb-8 bg-white">
           <p className="text-sm font-black text-black uppercase mb-4 flex items-center gap-2">
             <UserCheck className="w-4 h-4" />
-            Express Check-In
+            Express Check-In (College / Lab)
           </p>
           <form onSubmit={handleCheckIn} className="space-y-4">
             <div className="relative">
@@ -172,14 +174,14 @@ export default function Attendance() {
                     {checkInType === "college" && <div className="w-1.5 h-1.5 bg-black rounded-full" />}
                   </div>
                   <input type="radio" name="checkInType" value="college" checked={checkInType === "college"} onChange={(e) => setCheckInType(e.target.value)} className="hidden" />
-                  <span>COLENGE</span>
+                  <span>COLLEGE CHECK-IN</span>
                 </label>
                 <label className="flex items-center gap-2 text-sm font-black cursor-pointer group">
                   <div className={`w-5 h-5 border-3 border-black rounded-full flex items-center justify-center transition-all ${checkInType === "lab" ? "bg-neo-blue" : "bg-white"}`}>
                     {checkInType === "lab" && <div className="w-1.5 h-1.5 bg-black rounded-full" />}
                   </div>
                   <input type="radio" name="checkInType" value="lab" checked={checkInType === "lab"} onChange={(e) => setCheckInType(e.target.value)} className="hidden" />
-                  <span>LAB</span>
+                  <span>LAB CHECK-IN</span>
                 </label>
               </div>
               <button
@@ -237,12 +239,8 @@ export default function Attendance() {
                 {filtered.map((r) => (
                   <tr key={r.id} className="hover:bg-neo-yellow/5">
                     <td className="px-6 py-4 font-black font-mono text-xs">{r.hackerrank_id}</td>
-                    <td className="px-6 py-4">
-                      <EditableCell value={r.name} onSave={(v) => handleEdit(r.id, "name", v)} />
-                    </td>
-                    <td className="px-6 py-4">
-                      <EditableCell value={r.lab} onSave={(v) => handleEdit(r.id, "lab", v)} />
-                    </td>
+                    <td className="px-6 py-4 font-bold text-sm">{r.name || <span className="text-black/20 italic text-xs">—</span>}</td>
+                    <td className="px-6 py-4 font-bold text-sm">{r.lab || <span className="text-black/20 italic text-xs">—</span>}</td>
                     <td className="px-6 py-4">
                       <EditableCell value={r.college_check_in_at} type="datetime-local" onSave={(v) => handleEdit(r.id, "college_check_in_at", v)} className="font-mono text-[11px]" />
                     </td>
@@ -253,7 +251,7 @@ export default function Attendance() {
                       <button
                         onClick={() => handleUndo(r.id)}
                         className="p-2 border-2 border-black rounded-lg hover:bg-neo-red transition-colors"
-                        title="Undo check-in"
+                        title="Delete attendance record"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>

@@ -14,3 +14,5 @@ backend/data/
 
 # Upload files
 /backend/files/*
+
+.claude

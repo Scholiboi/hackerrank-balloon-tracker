@@ -5,9 +5,9 @@ import { qrScan } from "../api";
 import { QrCode, Camera, CameraOff, CheckCircle2, AlertCircle, X, ShieldCheck, MapPin, User, Loader2 } from "lucide-react";
 
 const SCAN_TYPES = [
-  { 
-    value: "lab", 
-    label: "Gate Check-in", 
+  {
+    value: "lab",
+    label: "College Check-in",
     description: "Verify participant arrival at the main entrance",
     color: "bg-neo-green",
     icon: ShieldCheck
@@ -36,9 +36,9 @@ function ResultCard({ result, onDismiss }) {
   const statusText = isError
     ? "Error"
     : isAlready
-    ? "Already Checked In"
+    ? "Already College Checked In"
     : result.action === "checked_in"
-    ? "Checked In"
+    ? "College Checked In"
     : "Seat Info";
 
   return (
@@ -100,7 +100,7 @@ function ResultCard({ result, onDismiss }) {
               {result.action === "seat_info" && (
                 <div className={`neo-badge w-full justify-center py-2 ${result.checked_in ? "bg-black text-white" : "bg-white/50 border-dashed"}`}>
                   <p className="text-[10px] font-black uppercase italic">
-                    {result.checked_in ? "Verified at Gate" : "Awaiting Gate Check-in"}
+                    {result.checked_in ? "College Check-in Verified" : "Awaiting College Check-in"}
                   </p>
                 </div>
               )}
@@ -171,12 +171,13 @@ export default function Scanner() {
         return;
       }
 
-      if (!payload.hackerrank_id) {
+      const hackerrank_id = payload.hackerrank_id || payload.hr_id;
+      if (!hackerrank_id) {
         setResult({ type: "error", message: "Missing ID." });
         return;
       }
 
-      const data = await qrScan({ ...payload, scan_type: scanType });
+      const data = await qrScan({ ...payload, hackerrank_id, scan_type: scanType });
       setResult(data);
     } catch (err) {
       setResult({
