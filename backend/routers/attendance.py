@@ -54,10 +54,12 @@ def attendance_stats(
     _: dict = Depends(get_current_admin),
 ):
     total = db.query(Participant).count()
-    checked_in = db.query(Attendance).count()
+    checked_in = db.query(Attendance).filter(Attendance.college_check_in_at.isnot(None)).count()
+    lab_checked_in = db.query(Attendance).filter(Attendance.lab_check_in_at.isnot(None)).count()
     return AttendanceStats(
         total_participants=total,
         checked_in=checked_in,
+        lab_checked_in=lab_checked_in,
         not_checked_in=total - checked_in,
     )
 
@@ -75,6 +77,11 @@ def _do_checkin(hackerrank_id: str, db: Session, check_in_type: str):
     now = datetime.now(timezone.utc)
 
     if existing:
+        # Check if this specific check-in type was already recorded
+        already_set = (
+            (check_in_type == "college" and existing.college_check_in_at is not None)
+            or (check_in_type == "lab" and existing.lab_check_in_at is not None)
+        )
         # Update the specific check-in time based on type
         if check_in_type == "college":
             existing.college_check_in_at = now
@@ -92,7 +99,7 @@ def _do_checkin(hackerrank_id: str, db: Session, check_in_type: str):
                 lab=participant.lab,
                 seat=participant.seat,
             ),
-            True,
+            already_set,
         )
 
     # Create new record with appropriate timestamp
@@ -165,14 +172,14 @@ def qr_scan(
         raise HTTPException(status_code=404, detail="Participant not found")
 
     if scan_type == "lab":
-        record, already_in = _do_checkin(hid, db, "lab")
+        record, already_in = _do_checkin(hid, db, "college")
         return {
             "action": "already_checked_in" if already_in else "checked_in",
             "hackerrank_id": record.hackerrank_id,
             "name": record.name,
             "lab": record.lab,
             "seat": record.seat,
-            "checked_in_at": (record.lab_check_in_at or record.college_check_in_at).isoformat(),
+            "checked_in_at": (record.college_check_in_at or record.lab_check_in_at).isoformat(),
         }
 
     # scan_type == "seat"
@@ -183,7 +190,7 @@ def qr_scan(
         "name": participant.name,
         "lab": participant.lab,
         "seat": participant.seat,
-        "checked_in": existing is not None,
+        "checked_in": existing is not None and existing.college_check_in_at is not None,
     }
 
 

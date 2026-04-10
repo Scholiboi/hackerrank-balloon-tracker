@@ -86,6 +86,7 @@ class AttendanceRead(BaseModel):
 class AttendanceStats(BaseModel):
     total_participants: int
     checked_in: int
+    lab_checked_in: int = 0
     not_checked_in: int
 
 
