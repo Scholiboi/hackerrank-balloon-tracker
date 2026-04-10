@@ -176,42 +176,61 @@ export default function WifiManager() {
               </div>
             </div>
 
-            <div className="overflow-x-auto">
+            {/* ── Mobile cards ── */}
+            <div className="block md:hidden divide-y-2 divide-black/10">
+              {filtered.map((c) => (
+                <div key={c.id} className={`p-4 space-y-2 ${!c.hackerrank_id ? "bg-neo-yellow/10" : ""}`}>
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-black font-mono text-sm">{c.login_id}</span>
+                      {c.hackerrank_id ? (
+                        <span className="neo-badge bg-neo-green py-0.5 shadow-none text-[10px]"><Wifi className="w-3 h-3 mr-1" /> Assigned</span>
+                      ) : (
+                        <span className="neo-badge bg-neo-yellow py-0.5 shadow-none text-[10px] border-dashed"><AlertTriangle className="w-3 h-3 mr-1" /> Unassigned</span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="bg-black/5 rounded-lg p-2">
+                      <p className="text-[9px] font-black uppercase text-black/40 mb-0.5">Password</p>
+                      <p className="font-mono text-xs font-bold">{c.password}</p>
+                    </div>
+                    <div className="bg-black/5 rounded-lg p-2">
+                      <p className="text-[9px] font-black uppercase text-black/40 mb-0.5">Participant</p>
+                      <p className="font-bold text-xs truncate">{c.participant_name || <span className="text-black/30 italic">—</span>}</p>
+                    </div>
+                  </div>
+                  {c.hackerrank_id && (
+                    <p className="font-mono text-[10px] text-black/40">@{c.hackerrank_id}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* ── Desktop table ── */}
+            <div className="hidden md:block overflow-x-auto">
               <table className="min-w-full text-xs">
                 <thead className="bg-black/5 border-b-2 border-black">
                   <tr>
                     <th className="px-3 py-2.5 text-left font-black uppercase tracking-wider text-[10px] whitespace-nowrap">Login ID</th>
                     <th className="px-3 py-2.5 text-left font-black uppercase tracking-wider text-[10px] whitespace-nowrap">Password</th>
-                    <th className="px-3 py-2.5 text-left font-black uppercase tracking-wider text-[10px] whitespace-nowrap hidden sm:table-cell">Assigned To</th>
+                    <th className="px-3 py-2.5 text-left font-black uppercase tracking-wider text-[10px] whitespace-nowrap">Assigned To</th>
                     <th className="px-3 py-2.5 text-left font-black uppercase tracking-wider text-[10px] whitespace-nowrap">Participant</th>
                     <th className="px-3 py-2.5 text-left font-black uppercase tracking-wider text-[10px] whitespace-nowrap">Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-black/5">
                   {filtered.map((c) => (
-                    <tr
-                      key={c.id}
-                      className={`transition-colors ${
-                        !c.hackerrank_id ? "bg-neo-yellow/20 hover:bg-neo-yellow/30" : "hover:bg-black/5"
-                      }`}
-                    >
+                    <tr key={c.id} className={`transition-colors ${!c.hackerrank_id ? "bg-neo-yellow/20 hover:bg-neo-yellow/30" : "hover:bg-black/5"}`}>
                       <td className="px-3 py-2 font-black font-mono text-xs whitespace-nowrap">{c.login_id}</td>
                       <td className="px-3 py-2 font-mono text-xs font-bold whitespace-nowrap">{c.password}</td>
-                      <td className="px-3 py-2 font-mono text-xs font-bold text-black/60 hidden sm:table-cell whitespace-nowrap">
-                        {c.hackerrank_id || <span className="text-black/30 italic">—</span>}
-                      </td>
-                      <td className="px-3 py-2 font-bold text-xs max-w-[120px] truncate" title={c.participant_name}>
-                        {c.participant_name || <span className="text-black/30 italic">—</span>}
-                      </td>
+                      <td className="px-3 py-2 font-mono text-xs text-black/60 whitespace-nowrap">{c.hackerrank_id || <span className="text-black/30 italic">—</span>}</td>
+                      <td className="px-3 py-2 font-bold text-xs max-w-[140px] truncate" title={c.participant_name}>{c.participant_name || <span className="text-black/30 italic">—</span>}</td>
                       <td className="px-3 py-2 whitespace-nowrap">
                         {c.hackerrank_id ? (
-                          <span className="neo-badge bg-neo-green py-0.5 shadow-none text-[10px]">
-                            <Wifi className="w-3 h-3 mr-1" /> Assigned
-                          </span>
+                          <span className="neo-badge bg-neo-green py-0.5 shadow-none text-[10px]"><Wifi className="w-3 h-3 mr-1" /> Assigned</span>
                         ) : (
-                          <span className="neo-badge bg-neo-yellow py-0.5 shadow-none text-[10px] border-dashed">
-                            <AlertTriangle className="w-3 h-3 mr-1" /> Unassigned
-                          </span>
+                          <span className="neo-badge bg-neo-yellow py-0.5 shadow-none text-[10px] border-dashed"><AlertTriangle className="w-3 h-3 mr-1" /> Unassigned</span>
                         )}
                       </td>
                     </tr>

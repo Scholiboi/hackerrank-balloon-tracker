@@ -4,7 +4,7 @@ import Navbar from "../components/Navbar";
 import SeatGrid from "../components/SeatGrid";
 import LiveLeaderboard from "../components/LiveLeaderboard";
 import { getPendingBalloons, tickBalloon, getLabs, getParticipants, getRecentBalloons } from "../api";
-import { RefreshCw, Map, Clock, PackageSearch, List, LayoutGrid, BarChart3 } from "lucide-react";
+import { RefreshCw, Map, Clock, PackageSearch, List, LayoutGrid, BarChart3, Check } from "lucide-react";
 
 export default function Dashboard() {
   const [allData, setAllData] = useState([]);
@@ -144,41 +144,68 @@ export default function Dashboard() {
                 <p className="font-bold text-black/60 mt-2">All balloons delivered.</p>
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="min-w-full text-xs border-collapse">
-                  <thead className="bg-neo-yellow/30 border-b-3 border-black">
-                    <tr>
-                      {[
-                        { label: "Time", cls: "" },
-                        { label: "HR Username", cls: "" },
-                        { label: "Name", cls: "" },
-                        { label: "Lab", cls: "" },
-                        { label: "Seat", cls: "hidden sm:table-cell" },
-                        { label: "Challenge", cls: "" },
-                        { label: "Balloon", cls: "" },
-                        { label: "", cls: "" },
-                      ].map((h) => (
-                        <th
-                          key={h.label}
-                          className={`px-3 py-2.5 text-left text-[10px] font-black text-black uppercase tracking-wider whitespace-nowrap ${h.cls}`}
+              <>
+                {/* ── Mobile card list ── */}
+                <div className="block md:hidden divide-y-2 divide-black/10">
+                  {filtered.map((s) => {
+                    const mins = Math.floor(Number(s.time_from_start) / 60).toString().padStart(2, "0");
+                    const secs = (Number(s.time_from_start) % 60).toString().padStart(2, "0");
+                    const ticking = tickingIds.has(s.submission_id);
+                    return (
+                      <div key={s.submission_id} className="p-4 flex items-start gap-3">
+                        <div className="flex-1 min-w-0 space-y-1.5">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-black text-sm truncate">{s.name}</span>
+                            <span className="font-mono text-[10px] text-black/40 bg-black/5 px-1.5 py-0.5 rounded">{mins}:{secs}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="bg-neo-blue/20 text-[10px] font-black px-1.5 py-0.5 rounded border border-black/10">{s.lab}{s.seat ? ` · ${s.seat}` : ""}</span>
+                            <span className="text-[10px] font-mono text-black/50 truncate italic">{s.hackerrank_id}</span>
+                          </div>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-[10px] font-bold text-black/70 truncate italic">{s.challenge}</span>
+                            {s.balloon_colour && (
+                              <span className="text-[10px] font-black px-2 py-0.5 rounded border-2 border-black" style={{ backgroundColor: s.balloon_colour.toLowerCase() }}>{s.balloon_colour}</span>
+                            )}
+                          </div>
+                        </div>
+                        <button
+                          disabled={ticking}
+                          onClick={() => handleTick(s.submission_id)}
+                          className="neo-btn bg-neo-green py-2 px-3 shadow-neo-sm text-xs uppercase shrink-0"
                         >
-                          {h.label}
-                        </th>
+                          {ticking ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : "✓"}
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* ── Desktop table ── */}
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="min-w-full text-xs border-collapse">
+                    <thead className="bg-neo-yellow/30 border-b-3 border-black">
+                      <tr>
+                        {["Time", "HR Username", "Name", "Lab", "Seat", "Challenge", "Balloon", ""].map((h) => (
+                          <th key={h} className="px-3 py-2.5 text-left text-[10px] font-black text-black uppercase tracking-wider whitespace-nowrap">
+                            {h}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-black/5">
+                      {filtered.map((s) => (
+                        <BalloonRow
+                          key={s.submission_id}
+                          submission={s}
+                          onTick={handleTick}
+                          ticking={tickingIds.has(s.submission_id)}
+                        />
                       ))}
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-black/5">
-                    {filtered.map((s) => (
-                      <BalloonRow
-                        key={s.submission_id}
-                        submission={s}
-                        onTick={handleTick}
-                        ticking={tickingIds.has(s.submission_id)}
-                      />
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </tbody>
+                  </table>
+                </div>
+              </>
             )}
           </div>
         )}

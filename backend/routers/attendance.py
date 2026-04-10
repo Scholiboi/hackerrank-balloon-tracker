@@ -164,8 +164,8 @@ def qr_scan(
 
     if not hid:
         raise HTTPException(status_code=400, detail="hackerrank_id is required")
-    if scan_type not in ("lab", "seat"):
-        raise HTTPException(status_code=400, detail="scan_type must be 'lab' or 'seat'")
+    if scan_type not in ("lab", "lab_checkin"):
+        raise HTTPException(status_code=400, detail="scan_type must be 'lab' or 'lab_checkin'")
 
     participant = db.query(Participant).filter_by(hackerrank_id=hid).first()
     if not participant:
@@ -182,15 +182,15 @@ def qr_scan(
             "checked_in_at": (record.college_check_in_at or record.lab_check_in_at).isoformat(),
         }
 
-    # scan_type == "seat"
-    existing = db.query(Attendance).filter_by(hackerrank_id=hid).first()
+    # scan_type == "lab_checkin"
+    record, already_in = _do_checkin(hid, db, "lab")
     return {
-        "action": "seat_info",
-        "hackerrank_id": participant.hackerrank_id,
-        "name": participant.name,
-        "lab": participant.lab,
-        "seat": participant.seat,
-        "checked_in": existing is not None and existing.college_check_in_at is not None,
+        "action": "already_lab_checked_in" if already_in else "lab_checked_in",
+        "hackerrank_id": record.hackerrank_id,
+        "name": record.name,
+        "lab": record.lab,
+        "seat": record.seat,
+        "checked_in_at": (record.lab_check_in_at or record.college_check_in_at).isoformat(),
     }
 
 

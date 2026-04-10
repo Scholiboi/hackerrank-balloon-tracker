@@ -8,15 +8,15 @@ const SCAN_TYPES = [
   {
     value: "lab",
     label: "College Check-in",
-    description: "Verify participant arrival at the main entrance",
+    description: "Record participant arrival at the main entrance",
     color: "bg-neo-green",
     icon: ShieldCheck
   },
-  { 
-    value: "seat", 
-    label: "Lab Verify", 
-    description: "Scan inside specific labs for seat allocation",
-    color: "bg-neo-blue",
+  {
+    value: "lab_checkin",
+    label: "Lab Check-in",
+    description: "Record participant entry into their assigned lab",
+    color: "bg-neo-yellow",
     icon: MapPin
   },
 ];
@@ -25,21 +25,22 @@ function ResultCard({ result, onDismiss }) {
   if (!result) return null;
 
   const isError = result.type === "error";
-  const isAlready = result.action === "already_checked_in";
 
   const colorClass = isError
     ? "bg-neo-red"
-    : isAlready
+    : result.action === "already_checked_in" || result.action === "already_lab_checked_in"
     ? "bg-neo-yellow"
     : "bg-neo-green";
 
   const statusText = isError
     ? "Error"
-    : isAlready
+    : result.action === "already_checked_in"
     ? "Already College Checked In"
     : result.action === "checked_in"
     ? "College Checked In"
-    : "Seat Info";
+    : result.action === "lab_checked_in"
+    ? "Lab Checked In"
+    : "Already Lab Checked In";
 
   return (
     <div className={`neo-card ${colorClass} p-5 relative mt-4`}>
@@ -97,13 +98,6 @@ function ResultCard({ result, onDismiss }) {
                 )}
               </div>
 
-              {result.action === "seat_info" && (
-                <div className={`neo-badge w-full justify-center py-2 ${result.checked_in ? "bg-black text-white" : "bg-white/50 border-dashed"}`}>
-                  <p className="text-[10px] font-black uppercase italic">
-                    {result.checked_in ? "College Check-in Verified" : "Awaiting College Check-in"}
-                  </p>
-                </div>
-              )}
             </div>
           )}
         </div>

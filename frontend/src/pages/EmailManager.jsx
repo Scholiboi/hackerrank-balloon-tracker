@@ -97,12 +97,42 @@ export default function EmailManager() {
                         </div>
                     </div>
 
-                    <div className="overflow-x-auto">
+                    {/* ── Mobile cards ── */}
+                    <div className="block md:hidden divide-y-2 divide-black/10">
+                        {filtered.map((p) => (
+                            <div key={p.id} className="p-4 flex items-start gap-3">
+                                <div className="flex-1 min-w-0 space-y-2">
+                                    <div className="flex items-center gap-2 flex-wrap">
+                                        <span className="font-black text-sm truncate">{p.name}</span>
+                                    </div>
+                                    <div className="font-mono text-[10px] text-black/50">@{p.hackerrank_id}</div>
+                                    <div className="flex gap-1 flex-wrap">
+                                        {p.lab && <span className="bg-neo-green text-[10px] font-black px-1.5 py-0.5 rounded border border-black">{p.lab}</span>}
+                                        {p.seat && <span className="bg-neo-pink text-[10px] font-black px-1.5 py-0.5 rounded border border-black">{p.seat}</span>}
+                                    </div>
+                                    <div className="font-mono text-[10px] break-all">
+                                        {p.email || <span className="text-neo-red italic font-black text-[10px]">NO EMAIL</span>}
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => handleSendSingle(p.hackerrank_id)}
+                                    disabled={!p.email}
+                                    className="p-2 border-2 border-black rounded-lg bg-neo-yellow hover:bg-black hover:text-white transition-all active:translate-x-0.5 active:translate-y-0.5 disabled:opacity-30 disabled:grayscale shrink-0"
+                                    title="Send Entry Pass"
+                                >
+                                    <Send className="w-3.5 h-3.5" />
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* ── Desktop table ── */}
+                    <div className="hidden md:block overflow-x-auto">
                         <table className="min-w-full text-xs">
                             <thead className="bg-black/5 border-b-2 border-black font-black uppercase tracking-wider">
                                 <tr>
                                     <th className="px-3 py-2.5 text-left text-[10px] whitespace-nowrap">Trainer</th>
-                                    <th className="px-3 py-2.5 text-left text-[10px] whitespace-nowrap hidden sm:table-cell">Lab / Seat</th>
+                                    <th className="px-3 py-2.5 text-left text-[10px] whitespace-nowrap">Lab / Seat</th>
                                     <th className="px-3 py-2.5 text-left text-[10px] whitespace-nowrap">Email</th>
                                     <th className="px-3 py-2.5 text-center text-[10px] w-12">Send</th>
                                 </tr>
@@ -114,7 +144,7 @@ export default function EmailManager() {
                                             <div className="font-black text-xs max-w-[140px] truncate" title={p.name}>{p.name}</div>
                                             <div className="font-mono text-[10px] opacity-60">@{p.hackerrank_id}</div>
                                         </td>
-                                        <td className="px-3 py-2 hidden sm:table-cell whitespace-nowrap">
+                                        <td className="px-3 py-2 whitespace-nowrap">
                                             <div className="font-bold uppercase text-[10px] flex gap-1 flex-wrap">
                                                 <span className="bg-neo-green px-1.5 py-0.5 rounded border border-black">{p.lab}</span>
                                                 <span className="bg-neo-pink px-1.5 py-0.5 rounded border border-black">{p.seat}</span>

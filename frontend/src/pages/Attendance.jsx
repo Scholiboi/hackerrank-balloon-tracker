@@ -223,24 +223,57 @@ export default function Attendance() {
               />
             </div>
           </div>
-          <div className="overflow-x-auto">
+          {/* ── Mobile cards ── */}
+          <div className="block md:hidden divide-y-2 divide-black/10">
+            {filtered.map((r) => (
+              <div key={r.id} className="p-4 flex items-start gap-3">
+                <div className="flex-1 min-w-0 space-y-2">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-black font-mono text-xs">{r.hackerrank_id}</span>
+                    {r.lab && <span className="bg-neo-blue/20 text-[10px] font-black px-1.5 py-0.5 rounded border border-black/10">{r.lab}</span>}
+                  </div>
+                  {r.name && <p className="font-bold text-sm">{r.name}</p>}
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="bg-neo-green/20 rounded-lg p-2 border border-dashed border-black/20">
+                      <p className="text-[9px] font-black uppercase text-black/40 mb-0.5">College Check-in</p>
+                      <EditableCell value={r.college_check_in_at} type="datetime-local" onSave={(v) => handleEdit(r.id, "college_check_in_at", v)} className="font-mono text-[10px]" />
+                    </div>
+                    <div className="bg-neo-blue/20 rounded-lg p-2 border border-dashed border-black/20">
+                      <p className="text-[9px] font-black uppercase text-black/40 mb-0.5">Lab Check-in</p>
+                      <EditableCell value={r.lab_check_in_at} type="datetime-local" onSave={(v) => handleEdit(r.id, "lab_check_in_at", v)} className="font-mono text-[10px]" />
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => handleUndo(r.id)}
+                  className="p-1.5 border-2 border-black rounded-lg hover:bg-neo-red transition-colors shrink-0"
+                  title="Delete attendance record"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ))}
+          </div>
+
+          {/* ── Desktop table ── */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="min-w-full text-xs">
               <thead className="bg-black/5 border-b-2 border-black">
                 <tr>
                   <th className="px-3 py-2.5 text-left font-black uppercase tracking-wider text-[10px] whitespace-nowrap">ID</th>
                   <th className="px-3 py-2.5 text-left font-black uppercase tracking-wider text-[10px] whitespace-nowrap">Name</th>
-                  <th className="px-3 py-2.5 text-left font-black uppercase tracking-wider text-[10px] whitespace-nowrap hidden sm:table-cell">Lab</th>
+                  <th className="px-3 py-2.5 text-left font-black uppercase tracking-wider text-[10px] whitespace-nowrap">Lab</th>
                   <th className="px-3 py-2.5 text-left font-black uppercase tracking-wider text-[10px] whitespace-nowrap">College Log</th>
                   <th className="px-3 py-2.5 text-left font-black uppercase tracking-wider text-[10px] whitespace-nowrap">Lab Log</th>
-                  <th className="px-3 py-2.5 text-center font-black uppercase tracking-wider text-[10px] whitespace-nowrap"></th>
+                  <th className="px-3 py-2.5 w-10" />
                 </tr>
               </thead>
               <tbody className="divide-y divide-black/5">
                 {filtered.map((r) => (
                   <tr key={r.id} className="hover:bg-neo-yellow/5">
                     <td className="px-3 py-2 font-black font-mono text-xs whitespace-nowrap">{r.hackerrank_id}</td>
-                    <td className="px-3 py-2 font-bold text-xs max-w-[120px] truncate" title={r.name}>{r.name || <span className="text-black/20 italic">—</span>}</td>
-                    <td className="px-3 py-2 font-bold text-xs hidden sm:table-cell whitespace-nowrap">{r.lab || <span className="text-black/20 italic">—</span>}</td>
+                    <td className="px-3 py-2 font-bold text-xs max-w-[140px] truncate" title={r.name}>{r.name || <span className="text-black/20 italic">—</span>}</td>
+                    <td className="px-3 py-2 font-bold text-xs whitespace-nowrap">{r.lab || <span className="text-black/20 italic">—</span>}</td>
                     <td className="px-3 py-2">
                       <EditableCell value={r.college_check_in_at} type="datetime-local" onSave={(v) => handleEdit(r.id, "college_check_in_at", v)} className="font-mono text-[10px]" />
                     </td>
@@ -248,11 +281,7 @@ export default function Attendance() {
                       <EditableCell value={r.lab_check_in_at} type="datetime-local" onSave={(v) => handleEdit(r.id, "lab_check_in_at", v)} className="font-mono text-[10px]" />
                     </td>
                     <td className="px-3 py-2 text-center">
-                      <button
-                        onClick={() => handleUndo(r.id)}
-                        className="p-1.5 border-2 border-black rounded-lg hover:bg-neo-red transition-colors"
-                        title="Delete attendance record"
-                      >
+                      <button onClick={() => handleUndo(r.id)} className="p-1.5 border-2 border-black rounded-lg hover:bg-neo-red transition-colors" title="Delete attendance record">
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </td>

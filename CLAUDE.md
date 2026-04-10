@@ -173,7 +173,7 @@ Two separate timestamps per participant:
 
 QR Scanner modes:
 - `scan_type = "lab"` → College Check-in (saves `college_check_in_at`)
-- `scan_type = "seat"` → Lab Verify (read-only, returns seat info + whether college check-in done)
+- `scan_type = "lab_checkin"` → Lab Check-in (saves `lab_check_in_at`)
 
 ---
 
