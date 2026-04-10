@@ -25,10 +25,10 @@ export default function LiveLeaderboard({ participants, recentBalloons }) {
                     <h3 className="text-xl font-black uppercase flex items-center gap-2">
                         <Info className="w-5 h-5" /> Live Signal Grid
                     </h3>
-                    <span className="text-xs font-black uppercase opacity-60">10 × 9 Configuration</span>
+                    <span className="hidden sm:inline text-xs font-black uppercase opacity-60">10 × 9 Configuration</span>
                 </div>
 
-                <div className="grid grid-cols-10 gap-2">
+                <div className="grid grid-cols-5 sm:grid-cols-10 gap-1 sm:gap-2">
                     {gridSlots.map((p, i) => (
                         <button
                             key={i}

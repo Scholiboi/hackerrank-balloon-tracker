@@ -2,6 +2,14 @@
 export default {
   content: ["./index.html", "./src/**/*.{js,jsx}"],
   theme: {
+    screens: {
+      xs: "480px",
+      sm: "640px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      "2xl": "1536px",
+    },
     extend: {
       colors: {
         "neo-yellow": "#B8F0C8",
@@ -16,6 +24,7 @@ export default {
       boxShadow: {
         neo: "4px 4px 0px 0px #000",
         "neo-lg": "8px 8px 0px 0px #000",
+        "neo-sm": "2px 2px 0px 0px #000",
       },
     },
   },

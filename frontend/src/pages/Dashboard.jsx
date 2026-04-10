@@ -82,7 +82,7 @@ export default function Dashboard() {
         {/* View Switcher & Header */}
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between mb-10">
           <div>
-            <h2 className="text-4xl font-black text-black tracking-tight uppercase leading-none mb-4">Command Center</h2>
+            <h2 className="text-2xl sm:text-4xl font-black text-black tracking-tight uppercase leading-none mb-4">Command Center</h2>
             <div className="flex p-1.5 bg-black/5 rounded-2xl border-3 border-black w-fit">
               {[
                 { id: "queue", label: "Queue", icon: List },
@@ -92,7 +92,7 @@ export default function Dashboard() {
                 <button
                   key={v.id}
                   onClick={() => setView(v.id)}
-                  className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-black uppercase text-sm transition-all ${view === v.id
+                  className={`flex items-center gap-1.5 px-3 sm:px-6 py-2.5 rounded-xl font-black uppercase text-xs sm:text-sm transition-all ${view === v.id
                     ? "bg-neo-yellow border-3 border-black shadow-neo-sm translate-x-0.5 translate-y-0.5"
                     : "text-black/50 hover:text-black"
                     }`}

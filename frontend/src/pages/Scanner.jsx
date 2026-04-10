@@ -237,7 +237,7 @@ export default function Scanner() {
         </div>
 
         {/* Scanner viewport */}
-        <div className="neo-card bg-black shadow-neo-lg overflow-hidden relative aspect-square max-w-[340px] mx-auto mb-8">
+        <div className="neo-card bg-black shadow-neo-lg overflow-hidden relative aspect-square w-full max-w-[340px] mx-auto mb-8">
           <div id="qr-reader" ref={scannerRef} className={`${scanning ? "block" : "hidden"} w-full h-full`} />
           
           {!scanning && (

@@ -32,30 +32,30 @@ export default function BalloonRow({ submission, onTick, ticking }) {
 
   return (
     <tr className="hover:bg-neo-yellow/5 transition-colors border-b-2 border-black/5">
-      <td className="px-6 py-4 font-black font-mono text-xs text-black/60 whitespace-nowrap">
+      <td className="px-3 sm:px-6 py-3 sm:py-4 font-black font-mono text-xs text-black/60 whitespace-nowrap">
         {mins}:{secs}
       </td>
-      <td className="px-6 py-4 font-black font-mono text-xs text-black whitespace-nowrap">
+      <td className="px-3 sm:px-6 py-3 sm:py-4 font-black font-mono text-xs text-black whitespace-nowrap">
         <span className="bg-neo-blue/20 px-2 py-1 rounded border-2 border-black/10">
           {submission.hackerrank_id}
         </span>
       </td>
-      <td className="px-6 py-4 font-black text-black whitespace-nowrap text-base">
+      <td className="px-3 sm:px-6 py-3 sm:py-4 font-black text-black whitespace-nowrap text-sm sm:text-base">
         {submission.name}
       </td>
-      <td className="px-6 py-4 font-bold text-black/80 whitespace-nowrap uppercase">
+      <td className="px-3 sm:px-6 py-3 sm:py-4 font-bold text-black/80 whitespace-nowrap uppercase text-xs sm:text-sm">
         {submission.lab}
       </td>
-      <td className="px-6 py-4 font-bold text-black/80 whitespace-nowrap uppercase">
+      <td className="px-3 sm:px-6 py-3 sm:py-4 font-bold text-black/80 whitespace-nowrap uppercase text-xs sm:text-sm">
         {submission.seat || "—"}
       </td>
-      <td className="px-6 py-4 font-bold text-black/70 max-w-xs truncate italic">
+      <td className="px-3 sm:px-6 py-3 sm:py-4 font-bold text-black/70 max-w-[140px] sm:max-w-xs truncate italic text-xs sm:text-sm">
         {submission.challenge}
       </td>
-      <td className="px-6 py-4">
+      <td className="px-3 sm:px-6 py-3 sm:py-4">
         <BalloonBadge colour={submission.balloon_colour} />
       </td>
-      <td className="px-6 py-4 text-right">
+      <td className="px-3 sm:px-6 py-3 sm:py-4 text-right">
         <button
           disabled={ticking}
           onClick={() => onTick(submission.submission_id)}

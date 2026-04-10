@@ -71,7 +71,7 @@ export default function DataTable({ columns, data, onDelete, onEdit, loading, so
               <th
                 key={col.key}
                 onClick={() => handleColumnClick(col.key)}
-                className={`px-6 py-4 text-left text-xs font-black text-black uppercase tracking-wider select-none ${
+                className={`px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-black text-black uppercase tracking-wider select-none ${
                   onSort ? "cursor-pointer hover:bg-black/10" : ""
                 }`}
               >
@@ -81,7 +81,7 @@ export default function DataTable({ columns, data, onDelete, onEdit, loading, so
                 </div>
               </th>
             ))}
-            {onDelete && <th className="px-6 py-4" />}
+            {onDelete && <th className="px-3 sm:px-6 py-3 sm:py-4" />}
           </tr>
         </thead>
         <tbody className="divide-y-2 divide-black/5">
@@ -90,7 +90,7 @@ export default function DataTable({ columns, data, onDelete, onEdit, loading, so
               {columns.map((col) => {
                 const isEditing = editCell?.rowId === row.id && editCell?.colKey === col.key;
                 return (
-                  <td key={col.key} className="px-6 py-3 text-black whitespace-nowrap">
+                  <td key={col.key} className="px-3 sm:px-6 py-2 sm:py-3 text-black whitespace-nowrap">
                     {isEditing ? (
                       <input
                         autoFocus
@@ -113,7 +113,7 @@ export default function DataTable({ columns, data, onDelete, onEdit, loading, so
                 );
               })}
               {onDelete && (
-                <td className="px-6 py-3 text-right">
+                <td className="px-3 sm:px-6 py-2 sm:py-3 text-right">
                   <button
                     onClick={() => onDelete(row.id)}
                     className="p-2 border-2 border-transparent rounded-lg text-black/30 hover:text-neo-red hover:bg-neo-red/10 hover:border-neo-red transition-all"

@@ -159,7 +159,7 @@ export default function Participants() {
             className="neo-card p-6 mb-8 bg-white"
           >
             <p className="text-xs font-black text-black/40 uppercase mb-4 tracking-widest">New Participant Registration</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
               {COLUMNS.map((col) => (
                 <div key={col.key}>
                   <label className="text-[10px] text-black font-black uppercase block mb-1.5 ml-1">{col.label}</label>

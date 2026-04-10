@@ -114,16 +114,16 @@ export default function WifiManager() {
 
         {/* Stats */}
         <div className="flex flex-wrap gap-4 mb-8">
-          <div className="neo-card p-4 bg-neo-blue flex-1 min-w-[120px] flex flex-col items-center justify-center">
-            <span className="text-3xl font-black">{total}</span>
+          <div className="neo-card p-4 bg-neo-blue w-[calc(33.333%-0.5rem)] sm:flex-1 sm:w-auto flex flex-col items-center justify-center">
+            <span className="text-2xl sm:text-3xl font-black">{total}</span>
             <span className="text-xs font-black uppercase mt-1 tracking-wider opacity-60">Total</span>
           </div>
-          <div className="neo-card p-4 bg-neo-green flex-1 min-w-[120px] flex flex-col items-center justify-center">
-            <span className="text-3xl font-black">{assignedCount}</span>
+          <div className="neo-card p-4 bg-neo-green w-[calc(33.333%-0.5rem)] sm:flex-1 sm:w-auto flex flex-col items-center justify-center">
+            <span className="text-2xl sm:text-3xl font-black">{assignedCount}</span>
             <span className="text-xs font-black uppercase mt-1 tracking-wider opacity-60">Assigned</span>
           </div>
-          <div className={`neo-card p-4 flex-1 min-w-[120px] flex flex-col items-center justify-center ${unassignedCount > 0 ? "bg-neo-yellow" : "bg-white"}`}>
-            <span className="text-3xl font-black">{unassignedCount}</span>
+          <div className={`neo-card p-4 w-[calc(33.333%-0.5rem)] sm:flex-1 sm:w-auto flex flex-col items-center justify-center ${unassignedCount > 0 ? "bg-neo-yellow" : "bg-white"}`}>
+            <span className="text-2xl sm:text-3xl font-black">{unassignedCount}</span>
             <span className="text-xs font-black uppercase mt-1 tracking-wider opacity-60">Unassigned</span>
           </div>
         </div>
@@ -140,7 +140,7 @@ export default function WifiManager() {
 
         {total > 0 && (
           <div className="neo-card overflow-hidden bg-white">
-            <div className="px-6 py-4 border-b-3 border-black bg-neo-yellow/20 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="px-4 sm:px-6 py-4 border-b-3 border-black bg-neo-yellow/20 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               {/* Filter tabs */}
               <div className="flex gap-2">
                 {[
@@ -180,11 +180,11 @@ export default function WifiManager() {
               <table className="min-w-full text-sm">
                 <thead className="bg-black/5 border-b-2 border-black">
                   <tr>
-                    <th className="px-6 py-4 text-left font-black uppercase tracking-wider text-xs">Login ID</th>
-                    <th className="px-6 py-4 text-left font-black uppercase tracking-wider text-xs">Password</th>
-                    <th className="px-6 py-4 text-left font-black uppercase tracking-wider text-xs">Assigned To</th>
-                    <th className="px-6 py-4 text-left font-black uppercase tracking-wider text-xs">Participant</th>
-                    <th className="px-6 py-4 text-left font-black uppercase tracking-wider text-xs">Status</th>
+                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-left font-black uppercase tracking-wider text-xs">Login ID</th>
+                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-left font-black uppercase tracking-wider text-xs">Password</th>
+                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-left font-black uppercase tracking-wider text-xs hidden sm:table-cell">Assigned To</th>
+                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-left font-black uppercase tracking-wider text-xs">Participant</th>
+                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-left font-black uppercase tracking-wider text-xs">Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y-2 divide-black/5">
@@ -195,15 +195,15 @@ export default function WifiManager() {
                         !c.hackerrank_id ? "bg-neo-yellow/20 hover:bg-neo-yellow/30" : "hover:bg-black/5"
                       }`}
                     >
-                      <td className="px-6 py-4 font-black font-mono text-sm">{c.login_id}</td>
-                      <td className="px-6 py-4 font-mono text-sm font-bold">{c.password}</td>
-                      <td className="px-6 py-4 font-mono text-xs font-bold text-black/60">
+                      <td className="px-3 sm:px-6 py-3 sm:py-4 font-black font-mono text-xs sm:text-sm">{c.login_id}</td>
+                      <td className="px-3 sm:px-6 py-3 sm:py-4 font-mono text-xs sm:text-sm font-bold">{c.password}</td>
+                      <td className="px-3 sm:px-6 py-3 sm:py-4 font-mono text-xs font-bold text-black/60 hidden sm:table-cell">
                         {c.hackerrank_id || <span className="text-black/30 italic">—</span>}
                       </td>
-                      <td className="px-6 py-4 font-bold text-sm">
+                      <td className="px-3 sm:px-6 py-3 sm:py-4 font-bold text-sm">
                         {c.participant_name || <span className="text-black/30 italic">—</span>}
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-3 sm:px-6 py-3 sm:py-4">
                         {c.hackerrank_id ? (
                           <span className="neo-badge bg-neo-green py-1 shadow-none text-[11px]">
                             <Wifi className="w-3 h-3 mr-1" /> Assigned

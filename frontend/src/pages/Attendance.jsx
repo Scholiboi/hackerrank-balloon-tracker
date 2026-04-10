@@ -12,7 +12,7 @@ function toDatetimeLocal(isoString) {
 
 function StatCard({ label, value, colour }) {
   return (
-    <div className={`neo-card p-4 sm:p-6 ${colour} flex flex-col items-center justify-center flex-1 min-w-[120px]`}>
+    <div className={`neo-card p-4 sm:p-6 ${colour} flex flex-col items-center justify-center w-[calc(50%-0.5rem)] sm:flex-1 sm:w-auto`}>
       <span className="text-3xl sm:text-4xl font-black">{value}</span>
       <span className="text-xs font-black uppercase mt-1 tracking-wider opacity-60 text-center">{label}</span>
     </div>
@@ -143,7 +143,7 @@ export default function Attendance() {
 
         {/* Stats */}
         {stats && (
-          <div className="flex flex-wrap gap-4 mb-8">
+          <div className="flex flex-wrap gap-2 sm:gap-4 mb-8">
             <StatCard label="Total Contestants" value={stats.total_participants} colour="bg-neo-blue" />
             <StatCard label="In Building" value={stats.checked_in} colour="bg-neo-green" />
             <StatCard label="In Lab" value={stats.lab_checked_in || 0} colour="bg-neo-yellow" />
@@ -227,27 +227,27 @@ export default function Attendance() {
             <table className="min-w-full text-sm">
               <thead className="bg-black/5 border-b-2 border-black">
                 <tr>
-                  <th className="px-6 py-4 text-left font-black uppercase tracking-wider">ID</th>
-                  <th className="px-6 py-4 text-left font-black uppercase tracking-wider">Name</th>
-                  <th className="px-6 py-4 text-left font-black uppercase tracking-wider">Lab</th>
-                  <th className="px-6 py-4 text-left font-black uppercase tracking-wider">College Log</th>
-                  <th className="px-6 py-4 text-left font-black uppercase tracking-wider">Lab Log</th>
-                  <th className="px-6 py-4 text-center font-black uppercase tracking-wider">Action</th>
+                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-left font-black uppercase tracking-wider text-xs">ID</th>
+                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-left font-black uppercase tracking-wider text-xs">Name</th>
+                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-left font-black uppercase tracking-wider text-xs">Lab</th>
+                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-left font-black uppercase tracking-wider text-xs">College Log</th>
+                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-left font-black uppercase tracking-wider text-xs">Lab Log</th>
+                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-center font-black uppercase tracking-wider text-xs">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y-2 divide-black/5">
                 {filtered.map((r) => (
                   <tr key={r.id} className="hover:bg-neo-yellow/5">
-                    <td className="px-6 py-4 font-black font-mono text-xs">{r.hackerrank_id}</td>
-                    <td className="px-6 py-4 font-bold text-sm">{r.name || <span className="text-black/20 italic text-xs">—</span>}</td>
-                    <td className="px-6 py-4 font-bold text-sm">{r.lab || <span className="text-black/20 italic text-xs">—</span>}</td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 font-black font-mono text-xs">{r.hackerrank_id}</td>
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 font-bold text-sm">{r.name || <span className="text-black/20 italic text-xs">—</span>}</td>
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 font-bold text-sm">{r.lab || <span className="text-black/20 italic text-xs">—</span>}</td>
+                    <td className="px-3 sm:px-6 py-3 sm:py-4">
                       <EditableCell value={r.college_check_in_at} type="datetime-local" onSave={(v) => handleEdit(r.id, "college_check_in_at", v)} className="font-mono text-[11px]" />
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4">
                       <EditableCell value={r.lab_check_in_at} type="datetime-local" onSave={(v) => handleEdit(r.id, "lab_check_in_at", v)} className="font-mono text-[11px]" />
                     </td>
-                    <td className="px-6 py-4 text-center">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-center">
                       <button
                         onClick={() => handleUndo(r.id)}
                         className="p-2 border-2 border-black rounded-lg hover:bg-neo-red transition-colors"

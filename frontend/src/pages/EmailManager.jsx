@@ -59,7 +59,7 @@ export default function EmailManager() {
             <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8">
                     <div>
-                        <h2 className="text-4xl font-black text-black tracking-tight uppercase mb-2">Email Control</h2>
+                        <h2 className="text-2xl sm:text-4xl font-black text-black tracking-tight uppercase mb-2">Email Control</h2>
                         <p className="text-sm font-bold text-black/60 uppercase">Manage Pokédex entry pass dispatch</p>
                     </div>
 
@@ -101,29 +101,29 @@ export default function EmailManager() {
                         <table className="min-w-full text-sm">
                             <thead className="bg-black/5 border-b-2 border-black font-black uppercase tracking-wider text-xs">
                                 <tr>
-                                    <th className="px-6 py-4 text-left">Trainer</th>
-                                    <th className="px-6 py-4 text-left">Lab / Seat</th>
-                                    <th className="px-6 py-4 text-left">Email Status</th>
-                                    <th className="px-6 py-4 text-center">Action</th>
+                                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-left">Trainer</th>
+                                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-left hidden sm:table-cell">Lab / Seat</th>
+                                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-left">Email</th>
+                                    <th className="px-3 sm:px-6 py-3 sm:py-4 text-center">Send</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y-2 divide-black/5">
                                 {filtered.map((p) => (
                                     <tr key={p.id} className="hover:bg-neo-blue/5">
-                                        <td className="px-6 py-4">
-                                            <div className="font-black text-base">{p.name}</div>
+                                        <td className="px-3 sm:px-6 py-3 sm:py-4">
+                                            <div className="font-black text-sm sm:text-base">{p.name}</div>
                                             <div className="font-mono text-xs opacity-60">@{p.hackerrank_id}</div>
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td className="px-3 sm:px-6 py-3 sm:py-4 hidden sm:table-cell">
                                             <div className="font-bold uppercase text-xs">
                                                 <span className="bg-neo-green px-1.5 py-0.5 rounded border-2 border-black mr-2">{p.lab}</span>
                                                 <span className="bg-neo-pink px-1.5 py-0.5 rounded border-2 border-black">{p.seat}</span>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td className="px-3 sm:px-6 py-3 sm:py-4">
                                             <span className="text-[11px] font-mono break-all">{p.email || <span className="text-neo-red italic font-black text-xs">NO EMAIL</span>}</span>
                                         </td>
-                                        <td className="px-6 py-4 text-center">
+                                        <td className="px-3 sm:px-6 py-3 sm:py-4 text-center">
                                             <button
                                                 onClick={() => handleSendSingle(p.hackerrank_id)}
                                                 disabled={!p.email}

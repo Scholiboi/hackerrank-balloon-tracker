@@ -138,14 +138,14 @@ export default function Portal() {
                     <p className="text-[10px] text-black/50 uppercase font-black mb-2 flex items-center gap-1">
                       <Wifi className="w-3 h-3" /> Guest Wifi
                     </p>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 xs:grid-cols-2 gap-2">
                       <div className="bg-neo-blue/20 rounded-lg p-2 border-2 border-dashed border-black/20">
                         <p className="text-[10px] font-black uppercase text-black/40">Login ID</p>
-                        <p className="text-sm font-black font-mono text-black">{p.wifi_login_id}</p>
+                        <p className="text-sm font-black font-mono text-black break-all">{p.wifi_login_id}</p>
                       </div>
                       <div className="bg-neo-blue/20 rounded-lg p-2 border-2 border-dashed border-black/20">
                         <p className="text-[10px] font-black uppercase text-black/40">Password</p>
-                        <p className="text-sm font-black font-mono text-black">{p.wifi_password}</p>
+                        <p className="text-sm font-black font-mono text-black break-all">{p.wifi_password}</p>
                       </div>
                     </div>
                   </div>

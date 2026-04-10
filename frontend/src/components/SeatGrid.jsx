@@ -16,11 +16,12 @@ export default function SeatGrid({ labName, participants, pendingBalloons }) {
     };
 
     return (
-        <div className="neo-card p-6 bg-white border-4 border-black shadow-neo">
-            <h3 className="text-xl font-black uppercase mb-6 text-center bg-neo-yellow py-2 border-b-4 border-black -mx-6 -mt-6">
+        <div className="neo-card overflow-hidden bg-white border-4 border-black shadow-neo">
+            <h3 className="text-xl font-black uppercase text-center bg-neo-yellow py-2 border-b-4 border-black px-6">
                 {labName}
             </h3>
-            <div className="grid grid-cols-2 gap-x-8 gap-y-3">
+            <div className="p-4 sm:p-6">
+            <div className="grid grid-cols-2 gap-x-3 sm:gap-x-6 gap-y-2 sm:gap-y-3">
                 {columns.map((offset) => (
                     <div key={offset} className="flex flex-col gap-3">
                         {rows.map((row) => {
@@ -68,6 +69,7 @@ export default function SeatGrid({ labName, participants, pendingBalloons }) {
                         })}
                     </div>
                 ))}
+            </div>
             </div>
         </div>
     );
