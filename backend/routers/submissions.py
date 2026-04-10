@@ -2,7 +2,7 @@ import os
 from typing import List
 
 from fastapi import APIRouter, Depends, Header, HTTPException, status
-from sqlalchemy import cast, Integer
+from sqlalchemy import cast, Integer, func
 from sqlalchemy.orm import Session
 
 from auth import get_current_admin
@@ -30,13 +30,23 @@ def receive_submissions(
         row[0]
         for row in db.query(Submission.submission_id).all()
     }
+    # One balloon per participant per challenge — ignore any later ACs
+    existing_pairs = {
+        (row[0], row[1])
+        for row in db.query(Submission.hackerrank_id, Submission.challenge).all()
+    }
 
     new_rows = []
+    seen_pairs: set = set()
     for s in submissions:
         if s.status != "Accepted":
             continue
         if s.submission_id in existing_ids:
             continue
+        pair = (s.hackerrank_id, s.challenge)
+        if pair in existing_pairs or pair in seen_pairs:
+            continue
+        seen_pairs.add(pair)
         new_rows.append(
             Submission(
                 submission_id=s.submission_id,
@@ -60,11 +70,20 @@ def receive_submissions(
 
 # ── Admin: balloon dashboard ──────────────────────────────────────────────────
 
+def _first_ac_subquery(db: Session, only_pending: bool):
+    """Return a subquery yielding the min(id) — i.e. earliest AC — per (hackerrank_id, challenge)."""
+    q = db.query(func.min(Submission.id).label("min_id"))
+    if only_pending:
+        q = q.filter(Submission.balloon_given == False)  # noqa: E712
+    return q.group_by(Submission.hackerrank_id, Submission.challenge).subquery()
+
+
 @router.get("/balloons/pending", response_model=List[BalloonPendingRead])
 def pending_balloons(
     db: Session = Depends(get_db),
     _: dict = Depends(get_current_admin),
 ):
+    first_ac = _first_ac_subquery(db, only_pending=True)
     rows = (
         db.query(
             Submission.submission_id,
@@ -76,9 +95,9 @@ def pending_balloons(
             Participant.seat,
             Question.balloon_colour,
         )
+        .join(first_ac, Submission.id == first_ac.c.min_id)
         .join(Participant, Submission.hackerrank_id == Participant.hackerrank_id)
         .join(Question, Submission.challenge == Question.challenge_name)
-        .filter(Submission.balloon_given == False)  # noqa: E712
         .order_by(cast(Submission.time_from_start, Integer).asc())
         .all()
     )
@@ -104,6 +123,7 @@ def recent_balloons(
     db: Session = Depends(get_db),
     _: dict = Depends(get_current_admin),
 ):
+    first_ac = _first_ac_subquery(db, only_pending=False)
     rows = (
         db.query(
             Submission.submission_id,
@@ -115,6 +135,7 @@ def recent_balloons(
             Participant.seat,
             Question.balloon_colour,
         )
+        .join(first_ac, Submission.id == first_ac.c.min_id)
         .join(Participant, Submission.hackerrank_id == Participant.hackerrank_id)
         .join(Question, Submission.challenge == Question.challenge_name)
         .order_by(cast(Submission.time_from_start, Integer).desc())
