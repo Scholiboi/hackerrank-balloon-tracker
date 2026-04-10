@@ -7,6 +7,7 @@ import Participants from "./pages/Participants";
 import Portal from "./pages/Portal";
 import Questions from "./pages/Questions";
 import Scanner from "./pages/Scanner";
+import EmailManager from "./pages/EmailManager";
 
 function ProtectedRoute() {
   const token = localStorage.getItem("admin_token");
@@ -27,6 +28,7 @@ export default function App() {
           <Route path="scanner" element={<Scanner />} />
           <Route path="participants" element={<Participants />} />
           <Route path="questions" element={<Questions />} />
+          <Route path="emails" element={<EmailManager />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

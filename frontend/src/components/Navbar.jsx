@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { 
-  LayoutDashboard, 
-  UserCheck, 
-  Users, 
-  HelpCircle, 
-  LogOut, 
-  Menu, 
+import {
+  LayoutDashboard,
+  UserCheck,
+  Users,
+  HelpCircle,
+  LogOut,
+  Menu,
   X,
-  QrCode
+  QrCode,
+  Mail
 } from "lucide-react";
 
 const links = [
@@ -17,6 +18,7 @@ const links = [
   { to: "/admin/scanner", label: "Scanner", icon: QrCode },
   { to: "/admin/participants", label: "Participants", icon: Users },
   { to: "/admin/questions", label: "Questions", icon: HelpCircle },
+  { to: "/admin/emails", label: "Emails", icon: Mail },
 ];
 
 export default function Navbar() {
@@ -45,11 +47,10 @@ export default function Navbar() {
                 <Link
                   key={to}
                   to={to}
-                  className={`flex items-center gap-2 px-4 py-2 border-3 border-transparent rounded-xl text-sm font-black transition-all ${
-                    location.pathname === to
-                      ? "bg-neo-yellow border-black shadow-neo"
-                      : "text-black/70 hover:bg-black/5 hover:text-black"
-                  }`}
+                  className={`flex items-center gap-2 px-4 py-2 border-3 border-transparent rounded-xl text-sm font-black transition-all ${location.pathname === to
+                    ? "bg-neo-yellow border-black shadow-neo"
+                    : "text-black/70 hover:bg-black/5 hover:text-black"
+                    }`}
                 >
                   <Icon className="w-4 h-4" />
                   {label}
@@ -86,11 +87,11 @@ export default function Navbar() {
       {menuOpen && (
         <>
           {/* Backdrop for click-to-close */}
-          <div 
-            className="fixed inset-0 bg-black/40 z-40 md:hidden backdrop-blur-[2px]" 
+          <div
+            className="fixed inset-0 bg-black/40 z-40 md:hidden backdrop-blur-[2px]"
             onClick={() => setMenuOpen(false)}
           />
-          
+
           <div className="fixed top-[72px] right-4 left-4 z-50 md:hidden neo-card bg-neo-green p-4 flex flex-col gap-2 max-w-sm mx-auto animate-in fade-in zoom-in duration-200 origin-top">
             <div className="flex items-center justify-between mb-2 px-1">
               <span className="text-[10px] font-black uppercase tracking-[0.2em] text-black/40">Navigation</span>
@@ -104,17 +105,16 @@ export default function Navbar() {
                 key={to}
                 to={to}
                 onClick={() => setMenuOpen(false)}
-                className={`flex items-center gap-3 px-4 py-3 border-3 border-black rounded-xl text-sm font-black italic transition-all ${
-                  location.pathname === to
-                    ? "bg-white shadow-neo-sm translate-x-1 translate-y-1"
-                    : "bg-white/60 active:translate-x-0.5 active:translate-y-0.5"
-                }`}
+                className={`flex items-center gap-3 px-4 py-3 border-3 border-black rounded-xl text-sm font-black italic transition-all ${location.pathname === to
+                  ? "bg-white shadow-neo-sm translate-x-1 translate-y-1"
+                  : "bg-white/60 active:translate-x-0.5 active:translate-y-0.5"
+                  }`}
               >
                 <Icon className="w-4 h-4" />
                 {label}
               </Link>
             ))}
-            
+
             <div className="h-px bg-black/10 my-1" />
 
             <button

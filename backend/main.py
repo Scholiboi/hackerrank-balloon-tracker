@@ -3,6 +3,9 @@ import json
 import logging
 import os
 from contextlib import asynccontextmanager
+from dotenv import load_dotenv
+
+load_dotenv()
 
 import httpx
 from fastapi import FastAPI
@@ -10,7 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from database import Base, SessionLocal, engine
 from models import Submission
-from routers import attendance, auth, participants, portal, questions, submissions
+from routers import attendance, auth, mailer, participants, portal, questions, submissions
 
 log = logging.getLogger("poller")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(name)s] %(levelname)s %(message)s")
@@ -107,6 +110,7 @@ app.include_router(participants.router, prefix="/api/participants")
 app.include_router(questions.router, prefix="/api/questions")
 app.include_router(submissions.router, prefix="/api")
 app.include_router(attendance.router, prefix="/api/attendance")
+app.include_router(mailer.router, prefix="/api/mailer")
 
 
 @app.get("/health")
