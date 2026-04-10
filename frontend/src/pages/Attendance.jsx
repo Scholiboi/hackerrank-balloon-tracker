@@ -2,13 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import { checkIn, getAttendance, getAttendanceStats, undoCheckIn, updateAttendance } from "../api";
 import { Search, UserCheck, Users, XCircle, Clock, Trash2 } from "lucide-react";
-
-function toDatetimeLocal(isoString) {
-  if (!isoString) return "";
-  const d = new Date(isoString);
-  const pad = (n) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
+import { formatIST, toDatetimeLocalIST, fromDatetimeLocalIST, timeIST } from "../utils";
 
 function StatCard({ label, value, colour }) {
   return (
@@ -24,7 +18,7 @@ function EditableCell({ value, type = "text", onSave, className = "" }) {
   const [draft, setDraft] = useState("");
 
   function start() {
-    setDraft(type === "datetime-local" ? toDatetimeLocal(value) : (value ?? ""));
+    setDraft(type === "datetime-local" ? toDatetimeLocalIST(value) : (value ?? ""));
     setEditing(true);
   }
 
@@ -32,7 +26,7 @@ function EditableCell({ value, type = "text", onSave, className = "" }) {
     setEditing(false);
     let parsed = draft;
     if (type === "datetime-local") {
-      parsed = draft ? new Date(draft).toISOString() : null;
+      parsed = fromDatetimeLocalIST(draft);
     }
     if (parsed !== value) await onSave(parsed);
   }
@@ -53,6 +47,26 @@ function EditableCell({ value, type = "text", onSave, className = "" }) {
         onKeyDown={handleKeyDown}
         className="px-2 py-1 border-2 border-black rounded font-bold text-xs focus:outline-none bg-white w-full min-w-[140px]"
       />
+    );
+  }
+
+  if (type === "datetime-local") {
+    const fmt = formatIST(value);
+    return (
+      <span
+        onClick={start}
+        className={`cursor-text hover:bg-neo-yellow/30 px-2 py-1 rounded-lg border-2 border-transparent hover:border-black/5 transition-all block ${className}`}
+        title="Click to edit"
+      >
+        {fmt ? (
+          <span className="leading-tight">
+            <span className="block font-mono font-bold">{fmt.time}</span>
+            <span className="block text-[9px] text-black/40 font-black uppercase">{fmt.date}</span>
+          </span>
+        ) : (
+          <span className="text-black/20 italic">empty</span>
+        )}
+      </span>
     );
   }
 
@@ -107,7 +121,7 @@ export default function Attendance() {
     try {
       const rec = await checkIn(id, checkInType);
       const timeKey = checkInType === "college" ? "college_check_in_at" : "lab_check_in_at";
-      const checkInTime = rec[timeKey] ? new Date(rec[timeKey]).toLocaleTimeString() : "unknown";
+      const checkInTime = rec[timeKey] ? timeIST(rec[timeKey]) : "unknown";
       const label = checkInType === "college" ? "College Check-in" : "Lab Check-in";
       setCheckInSuccess(`${rec.name || id} — ${label} recorded at ${checkInTime}`);
       setCheckInInput("");
