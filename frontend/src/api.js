@@ -50,6 +50,7 @@ export const uploadQuestions = (formData) =>
 
 // Balloons
 export const getPendingBalloons = () => api.get("/balloons/pending").then((r) => r.data);
+export const getRecentBalloons = () => api.get("/balloons/recent").then((r) => r.data);
 export const tickBalloon = (submissionId) =>
   api.post("/balloons/tick", { submission_id: submissionId }).then((r) => r.data);
 
@@ -62,3 +63,6 @@ export const qrScan = (payload) =>
   api.post("/attendance/qr-scan", payload).then((r) => r.data);
 export const updateAttendance = (id, data) => api.patch(`/attendance/${id}`, data).then((r) => r.data);
 export const undoCheckIn = (id) => api.delete(`/attendance/${id}`);
+// Mailer
+export const sendEmail = (hackerrank_id) => api.post(`/mailer/send/${hackerrank_id}`).then((r) => r.data);
+export const sendAllEmails = () => api.post("/mailer/send-all").then((r) => r.data);

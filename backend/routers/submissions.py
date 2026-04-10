@@ -98,6 +98,45 @@ def pending_balloons(
     ]
 
 
+@router.get("/balloons/recent", response_model=List[BalloonPendingRead])
+def recent_balloons(
+    limit: int = 100,
+    db: Session = Depends(get_db),
+    _: dict = Depends(get_current_admin),
+):
+    rows = (
+        db.query(
+            Submission.submission_id,
+            Submission.hackerrank_id,
+            Submission.challenge,
+            Submission.time_from_start,
+            Participant.name,
+            Participant.lab,
+            Participant.seat,
+            Question.balloon_colour,
+        )
+        .join(Participant, Submission.hackerrank_id == Participant.hackerrank_id)
+        .join(Question, Submission.challenge == Question.challenge_name)
+        .order_by(cast(Submission.time_from_start, Integer).desc())
+        .limit(limit)
+        .all()
+    )
+
+    return [
+        BalloonPendingRead(
+            submission_id=r.submission_id,
+            hackerrank_id=r.hackerrank_id,
+            challenge=r.challenge,
+            time_from_start=r.time_from_start,
+            name=r.name,
+            lab=r.lab,
+            seat=r.seat,
+            balloon_colour=r.balloon_colour,
+        )
+        for r in rows
+    ]
+
+
 @router.post("/balloons/tick")
 def tick_balloon(
     body: dict,

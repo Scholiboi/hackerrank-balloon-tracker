@@ -4,12 +4,14 @@
 
 @layer base {
   :root {
-    --background: 147 62% 83%; /* #B8F0C8 */
+    --background: 147 62% 83%;
+    /* #B8F0C8 */
     --foreground: 0 0% 0%;
     --primary: 0 0% 0%;
     --primary-foreground: 0 0% 100%;
     --secondary: 0 0% 100%;
-    --accent: 341 97% 87%; /* #FEBDD2 */
+    --accent: 341 97% 87%;
+    /* #FEBDD2 */
     --muted: 0 0% 95%;
     --border: 0 0% 0%;
     --radius: 0.75rem;
@@ -22,12 +24,13 @@
     --neo-red: #FA5D5D;
   }
 
-  html, body {
+  html,
+  body {
     margin: 0;
     padding: 0;
     color: #000;
     background-color: var(--neo-yellow);
-    background-image: radial-gradient(rgba(0,0,0,0.08) 1px, transparent 1px);
+    background-image: radial-gradient(rgba(0, 0, 0, 0.08) 1px, transparent 1px);
     background-size: 20px 20px;
     font-family: system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -84,5 +87,3 @@
     box-shadow: 2px 2px 0 0 #000;
   }
 }
-
-
