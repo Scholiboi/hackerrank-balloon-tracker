@@ -155,17 +155,13 @@ def qr_scan(
     Process a QR code scan for either lab check-in or seat validation.
 
     Body fields:
-      - scan_type: "lab" | "seat"
+      - scan_type: "lab" | "lab_checkin"
       - hackerrank_id: participant's HackerRank ID (required)
-      - name, email, mobile, lab, seat: optional fields from QR payload (ignored)
+        * Accepts hackerrank_id, hr_id, or username from QR payload
+      - name, email, mobile, lab, seat, gym, pokemon: optional fields from QR payload (ignored)
     """
     scan_type = (body.get("scan_type") or "").strip()
-    hid = (
-        body.get("hackerrank_id")
-        or body.get("hr_id")
-        or body.get("username")
-        or ""
-    ).strip()
+    hid = (body.get("hackerrank_id") or "").strip()
 
     if not hid:
         raise HTTPException(status_code=400, detail="hackerrank_id is required")
