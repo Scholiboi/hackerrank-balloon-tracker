@@ -9,6 +9,7 @@ const SCAN_TYPES = [
     value: "lab",
     label: "College Check-in",
     description: "Record participant arrival at the main entrance",
+    description2: "(Only first scan is recorded, repeats are ignored)",
     color: "bg-neo-green",
     icon: ShieldCheck
   },
@@ -16,6 +17,7 @@ const SCAN_TYPES = [
     value: "lab_checkin",
     label: "Lab Check-in",
     description: "Record participant entry into their assigned lab",
+    description2: "(Only first scan is recorded, repeats are ignored)",
     color: "bg-neo-yellow",
     icon: MapPin
   },
@@ -133,9 +135,15 @@ export default function Scanner() {
     try {
       await qr.start(
         { facingMode: "environment" },
-        { fps: 15, qrbox: { width: 250, height: 250 } },
-        onScanSuccess,
-        () => {}
+        { fps: 30, qrbox: 280 },
+        (decodedText, decodedResult) => {
+          console.log("[Scanner] Decoder invoked with:", decodedText);
+          onScanSuccess(decodedText);
+        },
+        (errorMessage) => {
+          // Error callback - this is called when decoding fails (not for camera errors)
+          console.debug("[Scanner] Decode attempt (no QR found)");
+        }
       );
       console.log("[Scanner] Camera started successfully");
     } catch (err) {
@@ -155,12 +163,12 @@ export default function Scanner() {
 
   async function onScanSuccess(decodedText) {
     console.log("[Scanner] QR code detected:", decodedText);
-    if (lastScannedRef.current === decodedText) {
-      console.log("[Scanner] Duplicate scan ignored");
+    if (lastScannedRef.current === decodedText || processing) {
+      console.log("[Scanner] Duplicate/processing scan ignored");
       return;
     }
     lastScannedRef.current = decodedText;
-    setTimeout(() => { lastScannedRef.current = null; }, 3000);
+    setTimeout(() => { lastScannedRef.current = null; }, 2000);
 
     setProcessing(true);
     try {
@@ -243,6 +251,11 @@ export default function Scanner() {
               <p className="text-[9px] font-black uppercase text-black/40 leading-relaxed">
                 {t.description}
               </p>
+              {t.description2 && (
+                <p className="text-[8px] font-black uppercase text-black/30 leading-relaxed italic mt-1">
+                  {t.description2}
+                </p>
+              )}
             </button>
           ))}
         </div>

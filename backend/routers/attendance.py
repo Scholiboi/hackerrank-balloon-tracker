@@ -82,10 +82,10 @@ def _do_checkin(hackerrank_id: str, db: Session, check_in_type: str):
             (check_in_type == "college" and existing.college_check_in_at is not None)
             or (check_in_type == "lab" and existing.lab_check_in_at is not None)
         )
-        # Update the specific check-in time based on type
-        if check_in_type == "college":
+        # Only update the check-in time if NOT already set (idempotent)
+        if check_in_type == "college" and existing.college_check_in_at is None:
             existing.college_check_in_at = now
-        elif check_in_type == "lab":
+        elif check_in_type == "lab" and existing.lab_check_in_at is None:
             existing.lab_check_in_at = now
         db.commit()
         db.refresh(existing)
@@ -163,27 +163,27 @@ def qr_scan(
     import logging
     log = logging.getLogger("qr_scan")
     
-    log.info(f"[QR Scan] Received payload: {body}")
+    log.debug(f"[QR Scan] Received payload: {body}")
     scan_type = (body.get("scan_type") or "").strip()
     hid = (body.get("hackerrank_id") or "").strip()
     
-    log.info(f"[QR Scan] Extracted - scan_type: {scan_type}, hackerrank_id: {hid}")
+    log.debug(f"[QR Scan] Extracted - scan_type: {scan_type}, hackerrank_id: {hid}")
 
     if not hid:
-        log.error(f"[QR Scan] Missing hackerrank_id")
+        log.warning(f"[QR Scan] Missing hackerrank_id")
         raise HTTPException(status_code=400, detail="hackerrank_id is required")
     if scan_type not in ("lab", "lab_checkin"):
-        log.error(f"[QR Scan] Invalid scan_type: {scan_type}")
+        log.warning(f"[QR Scan] Invalid scan_type: {scan_type}")
         raise HTTPException(status_code=400, detail="scan_type must be 'lab' or 'lab_checkin'")
 
     participant = db.query(Participant).filter_by(hackerrank_id=hid).first()
     if not participant:
-        log.error(f"[QR Scan] Participant not found for hackerrank_id: {hid}")
+        log.warning(f"[QR Scan] Participant not found for hackerrank_id: {hid}")
         raise HTTPException(status_code=404, detail="Participant not found")
-    log.info(f"[QR Scan] Found participant: {participant.name} ({hid})")
+    log.debug(f"[QR Scan] Found participant: {participant.name} ({hid})")
 
     if scan_type == "lab":
-        log.info(f"[QR Scan] Processing college check-in for {hid}")
+        log.debug(f"[QR Scan] Processing college check-in for {hid}")
         record, already_in = _do_checkin(hid, db, "college")
         response = {
             "action": "already_checked_in" if already_in else "checked_in",
@@ -193,11 +193,11 @@ def qr_scan(
             "seat": record.seat,
             "checked_in_at": (record.college_check_in_at or record.lab_check_in_at).isoformat(),
         }
-        log.info(f"[QR Scan] Response: {response}")
+        log.info(f"[QR Scan] College check-in for {hid}: {response['action']}")
         return response
 
     # scan_type == "lab_checkin"
-    log.info(f"[QR Scan] Processing lab check-in for {hid}")
+    log.debug(f"[QR Scan] Processing lab check-in for {hid}")
     record, already_in = _do_checkin(hid, db, "lab")
     response = {
         "action": "already_lab_checked_in" if already_in else "lab_checked_in",
@@ -207,7 +207,7 @@ def qr_scan(
         "seat": record.seat,
         "checked_in_at": (record.lab_check_in_at or record.college_check_in_at).isoformat(),
     }
-    log.info(f"[QR Scan] Response: {response}")
+    log.info(f"[QR Scan] Lab check-in for {hid}: {response['action']}")
     return response
 
 
