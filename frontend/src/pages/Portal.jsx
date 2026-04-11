@@ -157,7 +157,7 @@ export default function Portal() {
 
         <div className="flex justify-center mt-10">
           <a
-            href="https://www.hackerrank.com/djsce-regionalsixseven"
+            href="https://www.hackerrank.com/code-uncode-x-quantiphi-finals-2026"
             target="_blank"
             rel="noopener noreferrer"
             className="neo-btn bg-neo-green"
