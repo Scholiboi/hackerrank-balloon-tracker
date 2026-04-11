@@ -124,6 +124,7 @@ export default function Scanner() {
   }, []);
 
   async function startScanner() {
+    console.log("[Scanner] Starting camera...");
     setResult(null);
     lastScannedRef.current = null;
     const qr = new Html5Qrcode("qr-reader");
@@ -136,9 +137,11 @@ export default function Scanner() {
         onScanSuccess,
         () => {}
       );
-    } catch {
+      console.log("[Scanner] Camera started successfully");
+    } catch (err) {
+      console.error("[Scanner] Camera start failed:", err);
       setScanning(false);
-      setResult({ type: "error", message: "Camera access denied. Check permissions." });
+      setResult({ type: "error", message: `Camera error: ${err.message || "Check permissions"}` });
     }
   }
 
@@ -151,7 +154,11 @@ export default function Scanner() {
   }
 
   async function onScanSuccess(decodedText) {
-    if (lastScannedRef.current === decodedText) return;
+    console.log("[Scanner] QR code detected:", decodedText);
+    if (lastScannedRef.current === decodedText) {
+      console.log("[Scanner] Duplicate scan ignored");
+      return;
+    }
     lastScannedRef.current = decodedText;
     setTimeout(() => { lastScannedRef.current = null; }, 3000);
 
@@ -160,23 +167,33 @@ export default function Scanner() {
       let payload;
       try {
         payload = JSON.parse(decodedText);
-      } catch {
+        console.log("[Scanner] Parsed payload:", payload);
+      } catch (e) {
+        console.error("[Scanner] JSON parse failed:", e);
         setResult({ type: "error", message: "Invalid code format." });
         return;
       }
 
       const hackerrank_id = payload.hackerrank_id || payload.hr_id || payload.username;
+      console.log("[Scanner] Extracted hackerrank_id:", hackerrank_id);
       if (!hackerrank_id) {
+        console.error("[Scanner] No ID found in payload");
         setResult({ type: "error", message: "Missing ID." });
         return;
       }
 
-      const data = await qrScan({ ...payload, hackerrank_id, scan_type: scanType });
+      const requestData = { ...payload, hackerrank_id, scan_type: scanType };
+      console.log("[Scanner] Sending to backend:", requestData);
+      const data = await qrScan(requestData);
+      console.log("[Scanner] Backend response:", data);
       setResult(data);
     } catch (err) {
+      console.error("[Scanner] Request failed:", err);
+      const errorMsg = err.response?.data?.detail || err.message || "Scan request failed.";
+      console.error("[Scanner] Error message:", errorMsg);
       setResult({
         type: "error",
-        message: err.response?.data?.detail || "Scan request failed.",
+        message: errorMsg,
       });
     } finally {
       setProcessing(false);

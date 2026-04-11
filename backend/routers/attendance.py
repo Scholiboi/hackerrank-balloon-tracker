@@ -160,21 +160,32 @@ def qr_scan(
         * Accepts hackerrank_id, hr_id, or username from QR payload
       - name, email, mobile, lab, seat, gym, pokemon: optional fields from QR payload (ignored)
     """
+    import logging
+    log = logging.getLogger("qr_scan")
+    
+    log.info(f"[QR Scan] Received payload: {body}")
     scan_type = (body.get("scan_type") or "").strip()
     hid = (body.get("hackerrank_id") or "").strip()
+    
+    log.info(f"[QR Scan] Extracted - scan_type: {scan_type}, hackerrank_id: {hid}")
 
     if not hid:
+        log.error(f"[QR Scan] Missing hackerrank_id")
         raise HTTPException(status_code=400, detail="hackerrank_id is required")
     if scan_type not in ("lab", "lab_checkin"):
+        log.error(f"[QR Scan] Invalid scan_type: {scan_type}")
         raise HTTPException(status_code=400, detail="scan_type must be 'lab' or 'lab_checkin'")
 
     participant = db.query(Participant).filter_by(hackerrank_id=hid).first()
     if not participant:
+        log.error(f"[QR Scan] Participant not found for hackerrank_id: {hid}")
         raise HTTPException(status_code=404, detail="Participant not found")
+    log.info(f"[QR Scan] Found participant: {participant.name} ({hid})")
 
     if scan_type == "lab":
+        log.info(f"[QR Scan] Processing college check-in for {hid}")
         record, already_in = _do_checkin(hid, db, "college")
-        return {
+        response = {
             "action": "already_checked_in" if already_in else "checked_in",
             "hackerrank_id": record.hackerrank_id,
             "name": record.name,
@@ -182,10 +193,13 @@ def qr_scan(
             "seat": record.seat,
             "checked_in_at": (record.college_check_in_at or record.lab_check_in_at).isoformat(),
         }
+        log.info(f"[QR Scan] Response: {response}")
+        return response
 
     # scan_type == "lab_checkin"
+    log.info(f"[QR Scan] Processing lab check-in for {hid}")
     record, already_in = _do_checkin(hid, db, "lab")
-    return {
+    response = {
         "action": "already_lab_checked_in" if already_in else "lab_checked_in",
         "hackerrank_id": record.hackerrank_id,
         "name": record.name,
@@ -193,6 +207,8 @@ def qr_scan(
         "seat": record.seat,
         "checked_in_at": (record.lab_check_in_at or record.college_check_in_at).isoformat(),
     }
+    log.info(f"[QR Scan] Response: {response}")
+    return response
 
 
 @router.patch("/{attendance_id}", response_model=AttendanceRead)
