@@ -165,7 +165,7 @@ export default function Scanner() {
         return;
       }
 
-      const hackerrank_id = payload.hackerrank_id || payload.hr_id;
+      const hackerrank_id = payload.hackerrank_id || payload.hr_id || payload.username;
       if (!hackerrank_id) {
         setResult({ type: "error", message: "Missing ID." });
         return;

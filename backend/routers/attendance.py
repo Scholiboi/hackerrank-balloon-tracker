@@ -160,7 +160,12 @@ def qr_scan(
       - name, email, mobile, lab, seat: optional fields from QR payload (ignored)
     """
     scan_type = (body.get("scan_type") or "").strip()
-    hid = (body.get("hackerrank_id") or "").strip()
+    hid = (
+        body.get("hackerrank_id")
+        or body.get("hr_id")
+        or body.get("username")
+        or ""
+    ).strip()
 
     if not hid:
         raise HTTPException(status_code=400, detail="hackerrank_id is required")
